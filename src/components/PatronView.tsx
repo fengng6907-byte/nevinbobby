@@ -5,7 +5,7 @@ import { useEncore, Venue, Table } from "@/context/EncoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Search, Star, Clock, ChevronRight, X, CreditCard,
-  CheckCircle2, Music, Send, DollarSign, Filter
+  CheckCircle2, Music, Send, DollarSign, Filter, TrendingUp, Flame
 } from "lucide-react";
 
 const genres = ["All", "Jazz", "Rock", "Acoustic", "Mandopop", "Any"];
@@ -16,11 +16,17 @@ function DiscoverFeed({ onSelectVenue }: { onSelectVenue: (v: Venue) => void }) 
   const [genreFilter, setGenreFilter] = useState("All");
 
   const liveTonight = gigs.filter((g) => g.status === "confirmed" || g.status === "open");
-  const filtered = liveTonight.filter(
-    (g) =>
-      (genreFilter === "All" || g.genre === genreFilter) &&
-      (search === "" || g.venueName.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = liveTonight
+    .filter(
+      (g) =>
+        (genreFilter === "All" || g.genre === genreFilter) &&
+        (search === "" || g.venueName.toLowerCase().includes(search.toLowerCase()))
+    )
+    .sort((a, b) => {
+      const va = venues.find((v) => v.id === a.venueId);
+      const vb = venues.find((v) => v.id === b.venueId);
+      return (vb?.booking_velocity ?? 0) - (va?.booking_velocity ?? 0);
+    });
 
   return (
     <div className="space-y-6">
@@ -58,17 +64,33 @@ function DiscoverFeed({ onSelectVenue }: { onSelectVenue: (v: Venue) => void }) 
           Live Tonight
         </h2>
         <div className="space-y-3">
-          {filtered.map((gig) => {
+          {filtered.map((gig, index) => {
             const venue = venues.find((v) => v.id === gig.venueId);
             const artist = artists.find((a) => a.id === gig.confirmedArtistId);
+            const isTopRanked = index === 0 && (venue?.booking_velocity ?? 0) > 0;
             return (
               <motion.div
                 key={gig.id}
+                layout
+                layoutId={`gig-card-${gig.id}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4 hover:border-purple-500/30 transition-all cursor-pointer group"
+                transition={{ layout: { type: "spring", bounce: 0.2, duration: 0.6 } }}
+                className={`bg-[#16161D] border rounded-xl p-4 hover:border-purple-500/30 transition-all cursor-pointer group ${
+                  isTopRanked ? "border-amber-500/40" : "border-[#2A2A36]"
+                }`}
                 onClick={() => venue && onSelectVenue(venue)}
               >
+                {isTopRanked && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-1.5 mb-2 px-2.5 py-1 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-lg border border-amber-500/30 w-fit"
+                  >
+                    <Flame className="w-3 h-3 text-amber-400" />
+                    <span className="text-[10px] font-bold text-amber-400 tracking-wide uppercase">Trending #1 — Top Choice</span>
+                  </motion.div>
+                )}
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
@@ -80,6 +102,11 @@ function DiscoverFeed({ onSelectVenue }: { onSelectVenue: (v: Venue) => void }) 
                       }`}>
                         {gig.status === "confirmed" ? "LIVE" : "OPEN SLOT"}
                       </span>
+                      {venue && (venue.booking_velocity > 0) && (
+                        <span className="flex items-center gap-0.5 text-[10px] text-[#8888A0]">
+                          <TrendingUp className="w-3 h-3" />{venue.booking_velocity}
+                        </span>
+                      )}
                     </div>
                     {artist && (
                       <p className="text-sm text-purple-400 font-medium">{artist.name}</p>
