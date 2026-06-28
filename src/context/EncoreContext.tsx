@@ -22,6 +22,10 @@ export interface Venue {
   image: string;
   tables: Table[];
   booking_velocity: number;
+  lat: number;
+  lng: number;
+  distance: string;
+  liveAct?: string;
 }
 
 export interface Artist {
@@ -114,6 +118,10 @@ const initialVenues: Venue[] = [
     address: "12 Orchard Rd, Singapore",
     image: "/venues/velvet.jpg",
     booking_velocity: 3,
+    lat: 1.3021,
+    lng: 103.8198,
+    distance: "0.5 km",
+    liveAct: "Kai Chen — Acoustic",
     tables: [
       { id: "t1", label: "A1", x: 15, y: 55, seats: 2, minSpend: 80, status: "available" },
       { id: "t2", label: "A2", x: 35, y: 55, seats: 2, minSpend: 80, status: "available" },
@@ -131,6 +139,10 @@ const initialVenues: Venue[] = [
     address: "88 Club St, Singapore",
     image: "/venues/neon.jpg",
     booking_velocity: 1,
+    lat: 1.2810,
+    lng: 103.8467,
+    distance: "1.2 km",
+    liveAct: "The Rifts — Indie Rock",
     tables: [
       { id: "t9", label: "A1", x: 20, y: 60, seats: 2, minSpend: 60, status: "available" },
       { id: "t10", label: "A2", x: 45, y: 60, seats: 2, minSpend: 60, status: "available" },

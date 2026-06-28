@@ -5,8 +5,9 @@ import { useEncore, Venue, Table } from "@/context/EncoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Search, Star, Clock, ChevronRight, X, CreditCard,
-  CheckCircle2, Music, Send, DollarSign, Filter, TrendingUp, Flame
+  CheckCircle2, Music, Send, DollarSign, Filter, TrendingUp, Flame, Map, List
 } from "lucide-react";
+import VenueMap from "./VenueMap";
 
 const genres = ["All", "Jazz", "Rock", "Acoustic", "Mandopop", "Any"];
 
@@ -14,6 +15,7 @@ function DiscoverFeed({ onSelectVenue }: { onSelectVenue: (v: Venue) => void }) 
   const { venues, gigs, artists } = useEncore();
   const [search, setSearch] = useState("");
   const [genreFilter, setGenreFilter] = useState("All");
+  const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
   const liveTonight = gigs.filter((g) => g.status === "confirmed" || g.status === "open");
   const filtered = liveTonight
@@ -136,28 +138,62 @@ function DiscoverFeed({ onSelectVenue }: { onSelectVenue: (v: Venue) => void }) 
         </div>
       </div>
 
-      <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4">
-        <h3 className="text-sm font-semibold mb-3 text-[#8888A0]">Nearby Venues</h3>
-        <div className="h-40 rounded-lg bg-[#1E1E28] border border-[#2A2A36] flex items-center justify-center relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-3 h-3 rounded-full bg-purple-400 animate-pulse"
-                style={{
-                  left: `${15 + i * 15}%`,
-                  top: `${20 + (i % 3) * 25}%`,
-                  animationDelay: `${i * 0.3}s`,
-                }}
-              />
-            ))}
-          </div>
-          <div className="flex items-center gap-2 text-[#8888A0] text-sm">
-            <MapPin className="w-4 h-4" />
-            Mock Map View — {venues.length} venues nearby
-          </div>
-        </div>
+      <div className="flex items-center gap-1 bg-[#16161D] rounded-xl p-1 w-fit">
+        <button
+          onClick={() => setViewMode("map")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            viewMode === "map" ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
+          }`}
+        >
+          <Map className="w-3.5 h-3.5" /> Map
+        </button>
+        <button
+          onClick={() => setViewMode("list")}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+            viewMode === "list" ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
+          }`}
+        >
+          <List className="w-3.5 h-3.5" /> List
+        </button>
       </div>
+
+      {viewMode === "map" ? (
+        <VenueMap venues={venues} onSelectVenue={onSelectVenue} />
+      ) : (
+        <div className="space-y-2">
+          {[...venues].sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)).map((venue) => (
+            <motion.div
+              key={venue.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => onSelectVenue(venue)}
+              className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4 hover:border-purple-500/30 transition-all cursor-pointer group"
+            >
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-semibold">{venue.name}</h4>
+                    {venue.booking_velocity > 2 && (
+                      <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-bold flex items-center gap-0.5">
+                        <Flame className="w-2.5 h-2.5" /> HOT
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[#8888A0] flex items-center gap-1">
+                    <MapPin className="w-3 h-3" /> {venue.address} — {venue.distance}
+                  </p>
+                  {venue.liveAct && (
+                    <p className="text-xs text-purple-400 flex items-center gap-1">
+                      <Music className="w-3 h-3" /> {venue.liveAct}
+                    </p>
+                  )}
+                </div>
+                <ChevronRight className="w-5 h-5 text-[#8888A0] group-hover:text-purple-400 transition-colors" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
