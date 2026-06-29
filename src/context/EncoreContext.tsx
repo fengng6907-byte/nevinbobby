@@ -26,6 +26,10 @@ export interface Venue {
   lng: number;
   distance: string;
   liveAct?: string;
+  vibe: string;
+  coverGradient: string;
+  openHours: string;
+  rating: number;
 }
 
 export interface Artist {
@@ -122,6 +126,10 @@ const initialVenues: Venue[] = [
     lng: 103.8198,
     distance: "0.5 km",
     liveAct: "Kai Chen — Acoustic",
+    vibe: "Jazz · Cocktails · Intimate",
+    coverGradient: "from-purple-900/80 via-violet-800/60 to-indigo-900/80",
+    openHours: "7 PM – 2 AM",
+    rating: 4.8,
     tables: [
       { id: "t1", label: "A1", x: 15, y: 55, seats: 2, minSpend: 80, status: "available" },
       { id: "t2", label: "A2", x: 35, y: 55, seats: 2, minSpend: 80, status: "available" },
@@ -143,6 +151,10 @@ const initialVenues: Venue[] = [
     lng: 103.8467,
     distance: "1.2 km",
     liveAct: "The Rifts — Indie Rock",
+    vibe: "Rock · Craft Beer · Underground",
+    coverGradient: "from-rose-900/80 via-orange-800/60 to-amber-900/80",
+    openHours: "8 PM – 3 AM",
+    rating: 4.5,
     tables: [
       { id: "t9", label: "A1", x: 20, y: 60, seats: 2, minSpend: 60, status: "available" },
       { id: "t10", label: "A2", x: 45, y: 60, seats: 2, minSpend: 60, status: "available" },

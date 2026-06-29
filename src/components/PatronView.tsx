@@ -11,189 +11,202 @@ import VenueMap from "./VenueMap";
 
 const genres = ["All", "Jazz", "Rock", "Acoustic", "Mandopop", "Any"];
 
+function VenueCard({ venue, rank, onSelect }: { venue: Venue; rank: number; onSelect: (v: Venue) => void }) {
+  const { gigs } = useEncore();
+  const venueGigs = gigs.filter((g) => g.venueId === venue.id && (g.status === "confirmed" || g.status === "open"));
+  const isTopRanked = rank === 0 && venue.booking_velocity > 0;
+  const availableTables = venue.tables.filter((t) => t.status === "available").length;
+
+  return (
+    <motion.div
+      layout
+      layoutId={`venue-card-${venue.id}`}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ layout: { type: "spring", bounce: 0.2, duration: 0.6 } }}
+      onClick={() => onSelect(venue)}
+      className={`bg-[#16161D] border rounded-2xl overflow-hidden hover:border-purple-500/40 transition-all cursor-pointer group ${
+        isTopRanked ? "border-amber-500/40 ring-1 ring-amber-500/20" : "border-[#2A2A36]"
+      }`}
+    >
+      <div className={`relative h-36 bg-gradient-to-br ${venue.coverGradient} overflow-hidden`}>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvc3ZnPg==')] opacity-50" />
+        <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#16161D]" />
+
+        <div className="absolute top-3 left-3 flex items-center gap-2">
+          {isTopRanked && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-500/30 to-orange-500/30 rounded-lg border border-amber-500/40 backdrop-blur-sm"
+            >
+              <Flame className="w-3 h-3 text-amber-400" />
+              <span className="text-[10px] font-bold text-amber-400 tracking-wide uppercase">Trending #1</span>
+            </motion.div>
+          )}
+          {venue.liveAct && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-emerald-500/20 rounded-lg border border-emerald-500/30 backdrop-blur-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] font-semibold text-emerald-400">LIVE NOW</span>
+            </div>
+          )}
+        </div>
+
+        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-black/40 rounded-lg backdrop-blur-sm">
+          <MapPin className="w-3 h-3 text-purple-400" />
+          <span className="text-[10px] font-bold text-white">{venue.distance}</span>
+        </div>
+
+        <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
+          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center text-lg font-bold backdrop-blur-sm">
+            {venue.name.charAt(0)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-base truncate">{venue.name}</h3>
+            <p className="text-[11px] text-white/60">{venue.vibe}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 py-3 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs text-[#8888A0]">
+            <MapPin className="w-3 h-3" />
+            <span>{venue.address}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+            <span className="text-xs font-semibold text-amber-400">{venue.rating}</span>
+          </div>
+        </div>
+
+        {venue.liveAct && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
+            <Music className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+            <span className="text-xs font-medium text-purple-400 truncate">{venue.liveAct}</span>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-3 text-[#8888A0]">
+            <span className="flex items-center gap-1">
+              <Clock className="w-3 h-3" /> {venue.openHours}
+            </span>
+            {venueGigs.length > 0 && (
+              <span className="flex items-center gap-1">
+                <Music className="w-3 h-3" /> {venueGigs.length} gig{venueGigs.length > 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+          <span className={`font-semibold ${availableTables > 0 ? "text-emerald-400" : "text-rose-400"}`}>
+            {availableTables > 0 ? `${availableTables} tables open` : "Full"}
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between pt-1 border-t border-[#2A2A36]/50">
+          <div className="flex items-center gap-1.5">
+            {venue.booking_velocity > 0 && (
+              <span className="flex items-center gap-0.5 text-[10px] text-[#8888A0]">
+                <TrendingUp className="w-3 h-3" /> {venue.booking_velocity} booked today
+              </span>
+            )}
+          </div>
+          <span className="text-xs text-purple-400 font-medium group-hover:text-purple-300 flex items-center gap-1 transition-colors">
+            View & Book <ChevronRight className="w-3.5 h-3.5" />
+          </span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 function DiscoverFeed({ onSelectVenue }: { onSelectVenue: (v: Venue) => void }) {
-  const { venues, gigs, artists } = useEncore();
+  const { venues, gigs } = useEncore();
   const [search, setSearch] = useState("");
   const [genreFilter, setGenreFilter] = useState("All");
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
-  const liveTonight = gigs.filter((g) => g.status === "confirmed" || g.status === "open");
-  const filtered = liveTonight
-    .filter(
-      (g) =>
-        (genreFilter === "All" || g.genre === genreFilter) &&
-        (search === "" || g.venueName.toLowerCase().includes(search.toLowerCase()))
-    )
-    .sort((a, b) => {
-      const va = venues.find((v) => v.id === a.venueId);
-      const vb = venues.find((v) => v.id === b.venueId);
-      return (vb?.booking_velocity ?? 0) - (va?.booking_velocity ?? 0);
-    });
+  const sortedVenues = [...venues]
+    .filter((v) => {
+      if (search && !v.name.toLowerCase().includes(search.toLowerCase())) return false;
+      if (genreFilter !== "All") {
+        const venueGigs = gigs.filter((g) => g.venueId === v.id);
+        if (!venueGigs.some((g) => g.genre === genreFilter || genreFilter === "Any")) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => b.booking_velocity - a.booking_velocity);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8888A0]" />
         <input
           type="text"
-          placeholder="Search venues, artists..."
+          placeholder="Search bars near you..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full pl-11 pr-4 py-3 bg-[#16161D] border border-[#2A2A36] rounded-xl text-sm text-white placeholder-[#8888A0] focus:outline-none focus:border-purple-500/50 transition-colors"
         />
       </div>
 
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
-        <Filter className="w-4 h-4 text-[#8888A0] shrink-0" />
-        {genres.map((g) => (
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <Filter className="w-4 h-4 text-[#8888A0] shrink-0" />
+          {genres.map((g) => (
+            <button
+              key={g}
+              onClick={() => setGenreFilter(g)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                genreFilter === g
+                  ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                  : "bg-[#16161D] text-[#8888A0] border border-[#2A2A36] hover:border-[#3A3A46]"
+              }`}
+            >
+              {g}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-0.5 bg-[#16161D] rounded-lg p-0.5 shrink-0 ml-2">
           <button
-            key={g}
-            onClick={() => setGenreFilter(g)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-              genreFilter === g
-                ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
-                : "bg-[#16161D] text-[#8888A0] border border-[#2A2A36] hover:border-[#3A3A46]"
+            onClick={() => setViewMode("map")}
+            className={`p-1.5 rounded-md transition-all ${
+              viewMode === "map" ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
             }`}
           >
-            {g}
+            <Map className="w-4 h-4" />
           </button>
-        ))}
+          <button
+            onClick={() => setViewMode("list")}
+            className={`p-1.5 rounded-md transition-all ${
+              viewMode === "list" ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
+            }`}
+          >
+            <List className="w-4 h-4" />
+          </button>
+        </div>
       </div>
+
+      {viewMode === "map" && <VenueMap venues={venues} onSelectVenue={onSelectVenue} />}
 
       <div>
         <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          Live Tonight
+          {viewMode === "map" ? "On the Map" : "Bars Near You"}
+          <span className="text-xs font-normal text-[#8888A0]">— sorted by popularity</span>
         </h2>
-        <div className="space-y-3">
-          {filtered.map((gig, index) => {
-            const venue = venues.find((v) => v.id === gig.venueId);
-            const artist = artists.find((a) => a.id === gig.confirmedArtistId);
-            const isTopRanked = index === 0 && (venue?.booking_velocity ?? 0) > 0;
-            return (
-              <motion.div
-                key={gig.id}
-                layout
-                layoutId={`gig-card-${gig.id}`}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ layout: { type: "spring", bounce: 0.2, duration: 0.6 } }}
-                className={`bg-[#16161D] border rounded-xl p-4 hover:border-purple-500/30 transition-all cursor-pointer group ${
-                  isTopRanked ? "border-amber-500/40" : "border-[#2A2A36]"
-                }`}
-                onClick={() => venue && onSelectVenue(venue)}
-              >
-                {isTopRanked && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex items-center gap-1.5 mb-2 px-2.5 py-1 bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-lg border border-amber-500/30 w-fit"
-                  >
-                    <Flame className="w-3 h-3 text-amber-400" />
-                    <span className="text-[10px] font-bold text-amber-400 tracking-wide uppercase">Trending #1 — Top Choice</span>
-                  </motion.div>
-                )}
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{gig.venueName}</h3>
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                        gig.status === "confirmed"
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : "bg-amber-500/20 text-amber-400"
-                      }`}>
-                        {gig.status === "confirmed" ? "LIVE" : "OPEN SLOT"}
-                      </span>
-                      {venue && (venue.booking_velocity > 0) && (
-                        <span className="flex items-center gap-0.5 text-[10px] text-[#8888A0]">
-                          <TrendingUp className="w-3 h-3" />{venue.booking_velocity}
-                        </span>
-                      )}
-                    </div>
-                    {artist && (
-                      <p className="text-sm text-purple-400 font-medium">{artist.name}</p>
-                    )}
-                    <div className="flex items-center gap-3 text-xs text-[#8888A0]">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {gig.time}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Music className="w-3 h-3" />
-                        {gig.genre}
-                      </span>
-                      {venue && (
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {venue.address.split(",")[0]}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <ChevronRight className="w-5 h-5 text-[#8888A0] group-hover:text-purple-400 transition-colors" />
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="flex items-center gap-1 bg-[#16161D] rounded-xl p-1 w-fit">
-        <button
-          onClick={() => setViewMode("map")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-            viewMode === "map" ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
-          }`}
-        >
-          <Map className="w-3.5 h-3.5" /> Map
-        </button>
-        <button
-          onClick={() => setViewMode("list")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-            viewMode === "list" ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
-          }`}
-        >
-          <List className="w-3.5 h-3.5" /> List
-        </button>
-      </div>
-
-      {viewMode === "map" ? (
-        <VenueMap venues={venues} onSelectVenue={onSelectVenue} />
-      ) : (
-        <div className="space-y-2">
-          {[...venues].sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)).map((venue) => (
-            <motion.div
-              key={venue.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              onClick={() => onSelectVenue(venue)}
-              className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4 hover:border-purple-500/30 transition-all cursor-pointer group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-semibold">{venue.name}</h4>
-                    {venue.booking_velocity > 2 && (
-                      <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 text-[10px] font-bold flex items-center gap-0.5">
-                        <Flame className="w-2.5 h-2.5" /> HOT
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-[#8888A0] flex items-center gap-1">
-                    <MapPin className="w-3 h-3" /> {venue.address} — {venue.distance}
-                  </p>
-                  {venue.liveAct && (
-                    <p className="text-xs text-purple-400 flex items-center gap-1">
-                      <Music className="w-3 h-3" /> {venue.liveAct}
-                    </p>
-                  )}
-                </div>
-                <ChevronRight className="w-5 h-5 text-[#8888A0] group-hover:text-purple-400 transition-colors" />
-              </div>
-            </motion.div>
+        <div className="space-y-4">
+          {sortedVenues.map((venue, index) => (
+            <VenueCard key={venue.id} venue={venue} rank={index} onSelect={onSelectVenue} />
           ))}
+          {sortedVenues.length === 0 && (
+            <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-8 text-center">
+              <p className="text-sm text-[#8888A0]">No bars match your search.</p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
