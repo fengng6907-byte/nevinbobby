@@ -1,12 +1,13 @@
 "use client";
 
 import { useEncore } from "@/context/EncoreContext";
-import { Music, Mic2 } from "lucide-react";
+import { Music, Mic2, Heart } from "lucide-react";
 import { motion } from "framer-motion";
 
 const tabs = [
   { key: "patron" as const, label: "Discover", icon: Music, color: "text-purple-400" },
   { key: "artist" as const, label: "Live Bands", icon: Mic2, color: "text-emerald-400" },
+  { key: "tipjar" as const, label: "Tip Jar", icon: Heart, color: "text-amber-400" },
 ];
 
 export default function Navigation() {
@@ -29,7 +30,7 @@ export default function Navigation() {
               <button
                 key={tab.key}
                 onClick={() => setActiveView(tab.key)}
-                className={`relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   active ? "text-white" : "text-[#8888A0] hover:text-white/70"
                 }`}
               >

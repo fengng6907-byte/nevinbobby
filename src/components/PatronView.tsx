@@ -4,9 +4,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useEncore, Venue, Table, GooglePlaceVenue } from "@/context/EncoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  MapPin, Search, Star, Clock, ChevronRight, ChevronLeft, X, CreditCard,
-  CheckCircle2, Music, Send, DollarSign, Filter, TrendingUp, Flame,
-  Navigation, Users, ImageIcon, ArrowUpDown, Wifi
+  MapPin, Search, Star, Clock, ChevronLeft, X, CreditCard,
+  CheckCircle2, Music, TrendingUp, Flame,
+  Navigation, ImageIcon
 } from "lucide-react";
 import VenueMap from "./VenueMap";
 
@@ -618,95 +618,26 @@ function BookingCheckout({
   );
 }
 
-function TipJar() {
-  const { sendSongRequest } = useEncore();
-  const [songTitle, setSongTitle] = useState("");
-  const [tipAmount, setTipAmount] = useState(10);
-  const [patronName, setPatronName] = useState("");
-  const [sent, setSent] = useState(false);
-
-  const handleSend = () => {
-    if (!songTitle.trim() || !patronName.trim()) return;
-    sendSongRequest({ patronName, songTitle, tipAmount });
-    setSent(true);
-    setTimeout(() => { setSent(false); setSongTitle(""); setPatronName(""); setTipAmount(10); }, 2000);
-  };
-
-  return (
-    <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5 space-y-4">
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center"><Music className="w-4 h-4 text-amber-400" /></div>
-        <div><h3 className="font-semibold">Song Request & Tip</h3><p className="text-xs text-[#8888A0]">Send a request to the band on stage</p></div>
-      </div>
-      <input type="text" placeholder="Your name" value={patronName} onChange={(e) => setPatronName(e.target.value)} className="w-full px-4 py-2.5 bg-[#1E1E28] border border-[#2A2A36] rounded-xl text-sm placeholder-[#8888A0] focus:outline-none focus:border-purple-500/50" />
-      <input type="text" placeholder="Song title or request..." value={songTitle} onChange={(e) => setSongTitle(e.target.value)} className="w-full px-4 py-2.5 bg-[#1E1E28] border border-[#2A2A36] rounded-xl text-sm placeholder-[#8888A0] focus:outline-none focus:border-purple-500/50" />
-      <div>
-        <p className="text-xs text-[#8888A0] mb-2">Tip Amount</p>
-        <div className="flex gap-2">
-          {[5, 10, 20].map((amt) => (
-            <button key={amt} onClick={() => setTipAmount(amt)} className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-1 ${tipAmount === amt ? "bg-amber-500/20 text-amber-400 border border-amber-500/30" : "bg-[#1E1E28] text-[#8888A0] border border-[#2A2A36] hover:border-[#3A3A46]"}`}>
-              <DollarSign className="w-3 h-3" />{amt}
-            </button>
-          ))}
-        </div>
-      </div>
-      <AnimatePresence mode="wait">
-        {sent ? (
-          <motion.div key="sent" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="w-full py-3 bg-emerald-500/20 text-emerald-400 font-semibold rounded-xl flex items-center justify-center gap-2">
-            <CheckCircle2 className="w-4 h-4" /> Sent!
-          </motion.div>
-        ) : (
-          <motion.button key="send" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={handleSend} disabled={!songTitle.trim() || !patronName.trim()} className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white font-semibold rounded-xl disabled:opacity-40 flex items-center justify-center gap-2">
-            <Send className="w-4 h-4" /> Send Request — ${tipAmount}
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 export default function PatronView() {
   const { venues, bookTable } = useEncore();
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<GooglePlaceVenue | null>(null);
   const [bookingTable, setBookingTable] = useState<{ venue: Venue; table: Table } | null>(null);
-  const [tab, setTab] = useState<"discover" | "tipjar">("discover");
 
   return (
     <div className="max-w-lg mx-auto space-y-4">
-      <div className="flex gap-1 bg-[#16161D] rounded-xl p-1">
-        {[
-          { key: "discover" as const, label: "Discover" },
-          { key: "tipjar" as const, label: "Tip Jar" },
-        ].map((t) => (
-          <button
-            key={t.key}
-            onClick={() => { setTab(t.key); setSelectedVenue(null); setSelectedPlace(null); }}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
-              tab === t.key ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {tab === "discover" ? (
-        selectedVenue || selectedPlace ? (
-          <BarDetailView
-            venue={selectedVenue || undefined}
-            place={selectedPlace || undefined}
-            onBack={() => { setSelectedVenue(null); setSelectedPlace(null); }}
-            onBook={selectedVenue ? (table) => setBookingTable({ venue: selectedVenue, table }) : undefined}
-          />
-        ) : (
-          <DiscoverFeed
-            onSelectVenue={setSelectedVenue}
-            onSelectPlace={setSelectedPlace}
-          />
-        )
+      {selectedVenue || selectedPlace ? (
+        <BarDetailView
+          venue={selectedVenue || undefined}
+          place={selectedPlace || undefined}
+          onBack={() => { setSelectedVenue(null); setSelectedPlace(null); }}
+          onBook={selectedVenue ? (table) => setBookingTable({ venue: selectedVenue, table }) : undefined}
+        />
       ) : (
-        <TipJar />
+        <DiscoverFeed
+          onSelectVenue={setSelectedVenue}
+          onSelectPlace={setSelectedPlace}
+        />
       )}
 
       <AnimatePresence>

@@ -4,6 +4,7 @@ import { EncoreProvider, useEncore } from "@/context/EncoreContext";
 import Navigation from "@/components/Navigation";
 import PatronView from "@/components/PatronView";
 import ArtistView from "@/components/ArtistView";
+import TipJarView from "@/components/TipJarView";
 import { AnimatePresence, motion } from "framer-motion";
 
 function AppContent() {
@@ -23,6 +24,7 @@ function AppContent() {
           >
             {activeView === "patron" && <PatronView />}
             {activeView === "artist" && <ArtistView />}
+            {activeView === "tipjar" && <TipJarView />}
           </motion.div>
         </AnimatePresence>
       </main>
