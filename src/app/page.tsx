@@ -3,7 +3,6 @@
 import { EncoreProvider, useEncore } from "@/context/EncoreContext";
 import Navigation from "@/components/Navigation";
 import PatronView from "@/components/PatronView";
-import VenueView from "@/components/VenueView";
 import ArtistView from "@/components/ArtistView";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -23,7 +22,6 @@ function AppContent() {
             transition={{ duration: 0.2 }}
           >
             {activeView === "patron" && <PatronView />}
-            {activeView === "venue" && <VenueView />}
             {activeView === "artist" && <ArtistView />}
           </motion.div>
         </AnimatePresence>

@@ -1,13 +1,12 @@
 "use client";
 
 import { useEncore } from "@/context/EncoreContext";
-import { Music, Building2, Mic2 } from "lucide-react";
+import { Music, Mic2 } from "lucide-react";
 import { motion } from "framer-motion";
 
 const tabs = [
-  { key: "patron" as const, label: "Patron", icon: Music, color: "text-purple-400" },
-  { key: "venue" as const, label: "Venue", icon: Building2, color: "text-amber-400" },
-  { key: "artist" as const, label: "Artist", icon: Mic2, color: "text-emerald-400" },
+  { key: "patron" as const, label: "Discover", icon: Music, color: "text-purple-400" },
+  { key: "artist" as const, label: "Live Bands", icon: Mic2, color: "text-emerald-400" },
 ];
 
 export default function Navigation() {

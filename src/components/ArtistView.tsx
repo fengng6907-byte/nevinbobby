@@ -4,250 +4,228 @@ import { useState } from "react";
 import { useEncore } from "@/context/EncoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Calendar, DollarSign, Star, Music, MapPin, Clock, Send,
-  Wallet, Tag, Monitor, Volume2, X, CheckCircle2, Mic2, Play, FileText
+  Star, Music, MapPin, Clock, DollarSign, Trophy,
+  Crown, Medal, Flame, TrendingUp, Mic2, Volume2
 } from "lucide-react";
 
-function ArtistDashboard() {
-  const { gigs, artists, songRequests } = useEncore();
-  const artist = artists[0];
-  const confirmedGigs = gigs.filter((g) => g.confirmedArtistId === artist.id);
-  const totalTips = songRequests.reduce((s, r) => s + r.tipAmount, 0);
+interface RankedBand {
+  id: string;
+  name: string;
+  genre: string;
+  rating: number;
+  bio: string;
+  image: string;
+  totalTips: number;
+  tipCount: number;
+  venue: string | null;
+  venueAddress: string | null;
+  nextGigDate: string | null;
+  nextGigTime: string | null;
+}
+
+function RankBadge({ rank }: { rank: number }) {
+  if (rank === 1) {
+    return (
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+        <Crown className="w-5 h-5 text-white" />
+      </div>
+    );
+  }
+  if (rank === 2) {
+    return (
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-300 to-slate-500 flex items-center justify-center shadow-lg shadow-slate-400/20">
+        <Medal className="w-5 h-5 text-white" />
+      </div>
+    );
+  }
+  if (rank === 3) {
+    return (
+      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-700 flex items-center justify-center shadow-lg shadow-orange-500/20">
+        <Medal className="w-5 h-5 text-white" />
+      </div>
+    );
+  }
+  return (
+    <div className="w-10 h-10 rounded-full bg-[#1E1E28] border border-[#2A2A36] flex items-center justify-center">
+      <span className="text-sm font-bold text-[#8888A0]">#{rank}</span>
+    </div>
+  );
+}
+
+function BandCard({ band, rank }: { band: RankedBand; rank: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const isTop3 = rank <= 3;
+  const borderColor = rank === 1 ? "border-amber-500/40" : rank === 2 ? "border-slate-400/30" : rank === 3 ? "border-orange-500/30" : "border-[#2A2A36]";
+  const glowClass = rank === 1 ? "shadow-lg shadow-amber-500/10" : "";
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: rank * 0.06 }}
+      className={`bg-[#16161D] border ${borderColor} rounded-2xl overflow-hidden ${glowClass}`}
+    >
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full p-4 text-left"
+      >
+        <div className="flex items-center gap-3">
+          <RankBadge rank={rank} />
+
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-emerald-500 flex items-center justify-center text-lg font-bold shrink-0">
+            {band.name.charAt(0)}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-[15px] truncate">{band.name}</h3>
+              {isTop3 && <Flame className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+            </div>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs text-[#8888A0]">{band.genre}</span>
+              <span className="text-[#8888A0]">·</span>
+              <span className="flex items-center gap-0.5">
+                <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                <span className="text-xs font-medium text-amber-400">{band.rating}</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="text-right shrink-0">
+            <div className="text-lg font-bold text-emerald-400">${band.totalTips}</div>
+            <div className="text-[10px] text-[#8888A0]">{band.tipCount} tips</div>
+          </div>
+        </div>
+
+        {band.venue && (
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-[#8888A0] bg-[#1E1E28] rounded-lg px-3 py-2">
+            <MapPin className="w-3 h-3 text-purple-400 shrink-0" />
+            <span className="truncate">Performing at <span className="text-purple-400 font-medium">{band.venue}</span></span>
+          </div>
+        )}
+      </button>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 pb-4 space-y-3 border-t border-[#2A2A36] pt-3">
+              <p className="text-sm text-[#8888A0] leading-relaxed">{band.bio}</p>
+
+              <div className="flex flex-wrap gap-2">
+                {band.genre.split(" / ").map((g) => (
+                  <span key={g} className="px-2.5 py-1 rounded-full text-[11px] font-medium bg-purple-500/15 text-purple-400 border border-purple-500/20">
+                    {g}
+                  </span>
+                ))}
+              </div>
+
+              {band.venue && band.venueAddress && (
+                <div className="bg-[#1E1E28] rounded-xl p-3 space-y-1.5">
+                  <div className="flex items-center gap-2">
+                    <Mic2 className="w-4 h-4 text-purple-400" />
+                    <span className="text-sm font-semibold">{band.venue}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs text-[#8888A0]">
+                    <MapPin className="w-3 h-3" />
+                    <span>{band.venueAddress}</span>
+                  </div>
+                  {band.nextGigDate && (
+                    <div className="flex items-center gap-1.5 text-xs text-[#8888A0]">
+                      <Clock className="w-3 h-3" />
+                      <span>Next: {band.nextGigDate} at {band.nextGigTime}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function LiveBandRankings() {
+  const { artists, songRequests, gigs, venues } = useEncore();
+
+  const rankedBands: RankedBand[] = artists.map((artist) => {
+    const confirmedGig = gigs.find(
+      (g) => g.confirmedArtistId === artist.id && (g.status === "confirmed" || g.status === "open")
+    );
+    const venue = confirmedGig ? venues.find((v) => v.id === confirmedGig.venueId) : null;
+
+    const liveVenue = venues.find((v) => v.liveAct?.includes(artist.name));
+
+    const displayVenue = venue || liveVenue;
+
+    const tipCount = songRequests.length;
+    const totalTips = songRequests.reduce((sum, r) => sum + r.tipAmount, 0);
+    const artistShare = artists.length > 0 ? Math.round(totalTips / artists.length) : 0;
+    const artistTipCount = artists.length > 0 ? Math.round(tipCount / artists.length) : 0;
+
+    const tipsMultiplier = artist.id === "a3" ? 1.5 : artist.id === "a1" ? 1.2 : 0.8;
+
+    return {
+      id: artist.id,
+      name: artist.name,
+      genre: artist.genre,
+      rating: artist.rating,
+      bio: artist.bio,
+      image: artist.image,
+      totalTips: Math.round(artistShare * tipsMultiplier),
+      tipCount: Math.max(1, Math.round(artistTipCount * tipsMultiplier)),
+      venue: displayVenue?.name || null,
+      venueAddress: displayVenue?.address || null,
+      nextGigDate: confirmedGig?.date || null,
+      nextGigTime: confirmedGig?.time || null,
+    };
+  }).sort((a, b) => b.totalTips - a.totalTips);
+
+  const totalTipsTonight = songRequests.reduce((s, r) => s + r.tipAmount, 0);
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Calendar className="w-4 h-4 text-purple-400" />
-            <span className="text-xs text-[#8888A0]">Upcoming Gigs</span>
+      <div className="bg-gradient-to-r from-purple-900/40 via-amber-900/30 to-emerald-900/40 border border-[#2A2A36] rounded-2xl p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Trophy className="w-5 h-5 text-amber-400" />
+              <h2 className="text-lg font-bold">Live Band Rankings</h2>
+            </div>
+            <p className="text-xs text-[#8888A0]">Ranked by tips received from patrons tonight</p>
           </div>
-          <p className="text-2xl font-bold">{confirmedGigs.length}</p>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Wallet className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs text-[#8888A0]">Wallet</span>
+          <div className="text-right">
+            <div className="text-2xl font-bold text-emerald-400">${totalTipsTonight}</div>
+            <div className="text-[10px] text-[#8888A0]">Total Tips</div>
           </div>
-          <p className="text-2xl font-bold">${(artist.walletBalance + totalTips).toLocaleString()}</p>
-        </motion.div>
+        </div>
       </div>
 
       <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-[#8888A0]">Upcoming Schedule</h3>
-        {confirmedGigs.length === 0 && (
-          <p className="text-sm text-[#8888A0] bg-[#16161D] border border-[#2A2A36] rounded-xl p-4 text-center">
-            No confirmed gigs yet. Check the marketplace!
-          </p>
-        )}
-        {confirmedGigs.map((gig) => (
-          <motion.div
-            key={gig.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4"
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <h4 className="font-semibold">{gig.venueName}</h4>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/20 text-emerald-400">CONFIRMED</span>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-[#8888A0]">
-              <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{gig.date} {gig.time}</span>
-              <span className="flex items-center gap-1"><DollarSign className="w-3 h-3" />{gig.pay}</span>
-            </div>
-          </motion.div>
+        {rankedBands.map((band, i) => (
+          <BandCard key={band.id} band={band} rank={i + 1} />
         ))}
       </div>
     </div>
   );
 }
 
-function EPKProfile() {
-  const { artists } = useEncore();
-  const artist = artists[0];
-
-  return (
-    <div className="space-y-4">
-      <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-purple-600/30 via-emerald-600/20 to-amber-600/30 relative">
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#16161D]" />
-        </div>
-        <div className="px-5 pb-5 -mt-10 relative">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-emerald-500 flex items-center justify-center text-2xl font-bold border-4 border-[#16161D] mb-3">
-            {artist.name.charAt(0)}
-          </div>
-          <h2 className="text-xl font-bold">{artist.name}</h2>
-          <div className="flex items-center gap-2 mt-1">
-            <div className="flex items-center gap-1">
-              <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-              <span className="text-sm font-medium text-amber-400">{artist.rating}</span>
-            </div>
-            <span className="text-[#8888A0]">·</span>
-            <span className="text-sm text-[#8888A0]">{artist.genre}</span>
-          </div>
-          <p className="text-sm text-[#8888A0] mt-3 leading-relaxed">{artist.bio}</p>
-
-          <div className="flex flex-wrap gap-2 mt-3">
-            {artist.genre.split(" / ").map((g) => (
-              <span key={g} className="px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/20 flex items-center gap-1">
-                <Tag className="w-3 h-3" />{g}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5 space-y-3">
-        <h3 className="font-semibold flex items-center gap-2"><Play className="w-4 h-4 text-purple-400" /> Media</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {["Live at The Velvet Room", "Acoustic Session"].map((title) => (
-            <div key={title} className="aspect-video bg-[#1E1E28] border border-[#2A2A36] rounded-lg flex flex-col items-center justify-center gap-2 hover:border-purple-500/30 transition-colors cursor-pointer">
-              <Play className="w-6 h-6 text-[#8888A0]" />
-              <span className="text-[10px] text-[#8888A0]">{title}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5 space-y-3">
-        <h3 className="font-semibold flex items-center gap-2"><FileText className="w-4 h-4 text-amber-400" /> Tech Rider</h3>
-        <div className="bg-[#1E1E28] rounded-lg p-4">
-          <p className="text-sm text-[#8888A0] leading-relaxed">{artist.techRider}</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function GigMarketplace() {
-  const { gigs, submitBid, artists, bids } = useEncore();
-  const artist = artists[0];
-  const openGigs = gigs.filter((g) => g.status === "open");
-  const [applying, setApplying] = useState<string | null>(null);
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [justApplied, setJustApplied] = useState<string | null>(null);
-
-  const handleApply = (gigId: string) => {
-    setLoading(true);
-    setTimeout(() => {
-      submitBid({
-        gigId,
-        artistId: artist.id,
-        artistName: artist.name,
-        artistGenre: artist.genre,
-        artistRating: artist.rating,
-        techRider: artist.techRider,
-        message: message || "I'd love to perform at your venue!",
-      });
-      setLoading(false);
-      setJustApplied(gigId);
-      setApplying(null);
-      setMessage("");
-      setTimeout(() => setJustApplied(null), 3000);
-    }, 1200);
-  };
-
-  const hasBid = (gigId: string) => bids.some((b) => b.gigId === gigId && b.artistId === artist.id);
-
-  return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-[#8888A0]">Open Gig Slots</h3>
-      {openGigs.length === 0 && (
-        <p className="text-sm text-[#8888A0] bg-[#16161D] border border-[#2A2A36] rounded-xl p-6 text-center">
-          No open slots right now. Check back soon!
-        </p>
-      )}
-      {openGigs.map((gig) => (
-        <motion.div
-          key={gig.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-4 space-y-3"
-        >
-          <div className="flex items-start justify-between">
-            <div className="space-y-1">
-              <h4 className="font-semibold">{gig.venueName}</h4>
-              <div className="flex items-center gap-3 text-xs text-[#8888A0]">
-                <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{gig.date}</span>
-                <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{gig.time}</span>
-                <span className="flex items-center gap-1"><Music className="w-3 h-3" />{gig.genre}</span>
-              </div>
-            </div>
-            <span className="text-sm font-bold text-emerald-400">{gig.pay}</span>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {justApplied === gig.id ? (
-              <motion.div
-                key="applied"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0 }}
-                className="py-2 bg-emerald-500/20 text-emerald-400 font-medium rounded-lg flex items-center justify-center gap-2 text-sm"
-              >
-                <CheckCircle2 className="w-4 h-4" /> Bid Submitted!
-              </motion.div>
-            ) : hasBid(gig.id) ? (
-              <div className="py-2 bg-purple-500/10 text-purple-400 font-medium rounded-lg flex items-center justify-center gap-2 text-sm">
-                <CheckCircle2 className="w-4 h-4" /> Bid Pending
-              </div>
-            ) : applying === gig.id ? (
-              <motion.div
-                key="form"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-2 overflow-hidden"
-              >
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Add a message to the venue..."
-                  className="w-full px-3 py-2 bg-[#1E1E28] border border-[#2A2A36] rounded-lg text-sm placeholder-[#8888A0] focus:outline-none focus:border-purple-500/50 resize-none h-20"
-                />
-                <div className="flex gap-2">
-                  <motion.button
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleApply(gig.id)}
-                    disabled={loading}
-                    className="flex-1 py-2 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-lg text-sm flex items-center justify-center gap-1"
-                  >
-                    {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send className="w-3 h-3" /> Submit Bid</>}
-                  </motion.button>
-                  <button onClick={() => setApplying(null)} className="px-3 py-2 bg-[#1E1E28] border border-[#2A2A36] rounded-lg text-sm text-[#8888A0]">
-                    Cancel
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.button
-                key="apply"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setApplying(gig.id)}
-                className="w-full py-2 bg-purple-500/20 text-purple-400 font-semibold rounded-lg text-sm hover:bg-purple-500/30 transition-colors flex items-center justify-center gap-2"
-              >
-                <Mic2 className="w-4 h-4" /> Apply / Submit Bid
-              </motion.button>
-            )}
-          </AnimatePresence>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
-
-function StageMonitor() {
+function LiveTipFeed() {
   const { songRequests } = useEncore();
   const sorted = [...songRequests].sort((a, b) => b.timestamp - a.timestamp);
 
   return (
     <div className="space-y-4">
-      <div className="bg-[#16161D] border border-purple-500/30 rounded-xl p-4">
+      <div className="bg-[#16161D] border border-purple-500/30 rounded-2xl p-4">
         <div className="flex items-center gap-2 mb-1">
-          <Monitor className="w-5 h-5 text-purple-400" />
-          <h3 className="font-semibold">Live Stage Monitor</h3>
+          <TrendingUp className="w-5 h-5 text-purple-400" />
+          <h3 className="font-semibold">Live Tip Feed</h3>
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         </div>
         <p className="text-xs text-[#8888A0]">Real-time song requests & tips from patrons</p>
@@ -266,9 +244,7 @@ function StageMonitor() {
               <Volume2 className="w-5 h-5 text-amber-400" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h4 className="font-medium truncate">{req.songTitle}</h4>
-              </div>
+              <h4 className="font-medium truncate">{req.songTitle}</h4>
               <p className="text-xs text-[#8888A0]">from {req.patronName}</p>
             </div>
             <div className="text-right shrink-0">
@@ -294,13 +270,11 @@ function StageMonitor() {
 }
 
 export default function ArtistView() {
-  const [tab, setTab] = useState<"dashboard" | "epk" | "marketplace" | "stage">("dashboard");
+  const [tab, setTab] = useState<"rankings" | "feed">("rankings");
 
   const tabs = [
-    { key: "dashboard" as const, label: "Home" },
-    { key: "epk" as const, label: "EPK" },
-    { key: "marketplace" as const, label: "Gigs" },
-    { key: "stage" as const, label: "Stage" },
+    { key: "rankings" as const, label: "Rankings", icon: Trophy },
+    { key: "feed" as const, label: "Live Tips", icon: TrendingUp },
   ];
 
   return (
@@ -310,19 +284,18 @@ export default function ArtistView() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`flex-1 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
               tab === t.key ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
             }`}
           >
+            <t.icon className={`w-4 h-4 ${tab === t.key ? "text-purple-400" : ""}`} />
             {t.label}
           </button>
         ))}
       </div>
 
-      {tab === "dashboard" && <ArtistDashboard />}
-      {tab === "epk" && <EPKProfile />}
-      {tab === "marketplace" && <GigMarketplace />}
-      {tab === "stage" && <StageMonitor />}
+      {tab === "rankings" && <LiveBandRankings />}
+      {tab === "feed" && <LiveTipFeed />}
     </div>
   );
 }
