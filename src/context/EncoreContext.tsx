@@ -30,6 +30,26 @@ export interface Venue {
   coverGradient: string;
   openHours: string;
   rating: number;
+  photoUrl?: string | null;
+  userRatingsTotal?: number;
+  openNow?: boolean | null;
+  priceLevel?: number | null;
+  isGooglePlace?: boolean;
+}
+
+export interface GooglePlaceVenue {
+  place_id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  rating: number;
+  userRatingsTotal: number;
+  distance: string;
+  distanceValue: number;
+  photoUrl: string | null;
+  openNow: boolean | null;
+  priceLevel: number | null;
 }
 
 export interface Artist {
