@@ -8,19 +8,19 @@ import { MapPin, Navigation } from "lucide-react";
 const GOOGLE_MAPS_KEY = "AIzaSyCD_6oA5BlqCbWyBldL_7OqJ2t8K8AnHY8";
 
 const darkMapStyle = [
-  { elementType: "geometry", stylers: [{ color: "#1a1a2e" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#1a1a2e" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#6b6b8d" }] },
-  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#8888a0" }] },
-  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#6b6b8d" }] },
-  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#1e1e30" }] },
-  { featureType: "road", elementType: "geometry", stylers: [{ color: "#22223a" }] },
-  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#2a2a44" }] },
-  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#2a2a48" }] },
-  { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#333355" }] },
-  { featureType: "transit", elementType: "geometry", stylers: [{ color: "#1e1e35" }] },
-  { featureType: "water", elementType: "geometry", stylers: [{ color: "#0e0e1a" }] },
-  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3a3a5c" }] },
+  { elementType: "geometry", stylers: [{ color: "#0A1440" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#0A1440" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#5F7BC4" }] },
+  { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#8FA6E0" }] },
+  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#5F7BC4" }] },
+  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#0C1A4E" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#14265F" }] },
+  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#1B3170" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#1D3577" }] },
+  { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#24408F" }] },
+  { featureType: "transit", elementType: "geometry", stylers: [{ color: "#0C1A4E" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#050D2E" }] },
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#33508F" }] },
 ];
 
 const containerStyle = { width: "100%", height: "100%" };
@@ -56,9 +56,9 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
 
   if (!isLoaded) {
     return (
-      <div className="h-48 bg-[#1E1E28] flex items-center justify-center">
-        <div className="flex items-center gap-3 text-[#8888A0]">
-          <div className="w-5 h-5 border-2 border-[#8888A0]/30 border-t-purple-400 rounded-full animate-spin" />
+      <div className="h-48 bg-[#0E1F5C] flex items-center justify-center">
+        <div className="flex items-center gap-3 text-[#8FA6E0]">
+          <div className="w-5 h-5 border-2 border-[#8FA6E0]/30 border-t-cyan-300 rounded-full animate-spin" />
           <span className="text-sm">Loading map...</span>
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
           fullscreenControl: false,
           mapTypeControl: false,
           streetViewControl: false,
-          backgroundColor: "#0D0D11",
+          backgroundColor: "#030B29",
         }}
       >
         {isSingleMode && singlePin && (
@@ -88,9 +88,9 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
             position={{ lat: singlePin.lat, lng: singlePin.lng }}
             icon={{
               path: google.maps.SymbolPath.CIRCLE,
-              fillColor: "#A855F7",
+              fillColor: "#00D8FF",
               fillOpacity: 1,
-              strokeColor: "#7C3AED",
+              strokeColor: "#0E7490",
               strokeWeight: 3,
               scale: 12,
             }}
@@ -104,9 +104,9 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
             onClick={() => setActiveMarker(venue.id)}
             icon={{
               path: google.maps.SymbolPath.CIRCLE,
-              fillColor: "#A855F7",
+              fillColor: "#00D8FF",
               fillOpacity: 1,
-              strokeColor: "#7C3AED",
+              strokeColor: "#0E7490",
               strokeWeight: 3,
               scale: 10,
             }}
@@ -116,15 +116,15 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
                 position={{ lat: venue.lat, lng: venue.lng }}
                 onCloseClick={() => setActiveMarker(null)}
               >
-                <div style={{ background: "#16161D", padding: "12px", borderRadius: "12px", minWidth: "180px", border: "1px solid #2A2A36" }}>
-                  <div style={{ fontWeight: 700, color: "#F0F0F5", fontSize: "14px", marginBottom: "6px" }}>{venue.name}</div>
+                <div style={{ background: "#0A1748", padding: "12px", borderRadius: "12px", minWidth: "180px", border: "1px solid #24408F" }}>
+                  <div style={{ fontWeight: 700, color: "#EAF2FF", fontSize: "14px", marginBottom: "6px" }}>{venue.name}</div>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                    <span style={{ color: "#8888A0", fontSize: "11px" }}>{venue.distance}</span>
-                    <span style={{ color: "#F59E0B", fontSize: "11px" }}>★ {venue.rating}</span>
+                    <span style={{ color: "#8FA6E0", fontSize: "11px" }}>{venue.distance}</span>
+                    <span style={{ color: "#FBBF24", fontSize: "11px" }}>★ {venue.rating}</span>
                   </div>
                   <button
                     onClick={() => onSelectVenue(venue)}
-                    style={{ width: "100%", padding: "8px", background: "linear-gradient(to right, #9333EA, #A855F7)", color: "white", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
+                    style={{ width: "100%", padding: "8px", background: "linear-gradient(to right, #0891B2, #00D8FF)", color: "white", border: "none", borderRadius: "8px", fontSize: "12px", fontWeight: 600, cursor: "pointer" }}
                   >
                     View & Book
                   </button>

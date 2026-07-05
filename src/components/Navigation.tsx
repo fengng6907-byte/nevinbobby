@@ -1,29 +1,34 @@
 "use client";
 
 import { useEncore } from "@/context/EncoreContext";
-import { Music, Mic2, Heart } from "lucide-react";
+import { Music, Mic2, Heart, Building2, Search } from "lucide-react";
 import { motion } from "framer-motion";
 
 const tabs = [
-  { key: "patron" as const, label: "Discover", icon: Music, color: "text-purple-400" },
-  { key: "artist" as const, label: "Live Bands", icon: Mic2, color: "text-emerald-400" },
-  { key: "tipjar" as const, label: "Tip Jar", icon: Heart, color: "text-amber-400" },
+  { key: "city" as const, label: "City", icon: Building2 },
+  { key: "patron" as const, label: "Discover", icon: Search },
+  { key: "artist" as const, label: "Live Bands", icon: Mic2 },
+  { key: "tipjar" as const, label: "Tip Jar", icon: Heart },
 ];
 
 export default function Navigation() {
   const { activeView, setActiveView } = useEncore();
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-[#2A2A36] bg-[#0D0D11]/90 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-amber-500 flex items-center justify-center">
-            <Music className="w-4 h-4 text-white" />
+    <nav className="sticky top-3 z-50 px-3">
+      <div className="max-w-3xl mx-auto glass rounded-2xl flex items-center justify-between h-14 px-3">
+        <button
+          onClick={() => setActiveView("city")}
+          className="flex items-center gap-2 pl-1"
+          aria-label="ENCORE home"
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#00D8FF] to-[#5A68FF] flex items-center justify-center glow-cyan">
+            <Music className="w-4 h-4 text-[#02102E]" />
           </div>
-          <span className="text-lg font-bold tracking-tight">ENCORE</span>
-        </div>
+          <span className="text-base font-bold tracking-[0.14em] text-glow hidden xs:inline sm:inline">ENCORE</span>
+        </button>
 
-        <div className="flex items-center gap-1 bg-[#16161D] rounded-xl p-1">
+        <div className="flex items-center gap-1 bg-[#03102E]/40 rounded-xl p-1">
           {tabs.map((tab) => {
             const active = activeView === tab.key;
             return (
@@ -31,26 +36,24 @@ export default function Navigation() {
                 key={tab.key}
                 onClick={() => setActiveView(tab.key)}
                 className={`relative flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  active ? "text-white" : "text-[#8888A0] hover:text-white/70"
+                  active ? "text-white" : "text-[#8FA6E0] hover:text-white/80"
                 }`}
               >
                 {active && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-[#1E1E28] rounded-lg border border-[#2A2A36]"
+                    className="absolute inset-0 rounded-lg bg-[#00D8FF]/12 border border-[#00D8FF]/35 glow-cyan"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                   />
                 )}
                 <span className="relative flex items-center gap-2">
-                  <tab.icon className={`w-4 h-4 ${active ? tab.color : ""}`} />
+                  <tab.icon className={`w-4 h-4 ${active ? "text-[#6CF9FF]" : ""}`} />
                   <span className="hidden sm:inline">{tab.label}</span>
                 </span>
               </button>
             );
           })}
         </div>
-
-        <div className="text-xs text-[#8888A0] hidden md:block">Interactive Prototype</div>
       </div>
     </nav>
   );

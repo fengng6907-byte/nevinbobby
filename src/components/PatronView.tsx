@@ -16,10 +16,10 @@ function PlacePhoto({ url, name, className }: { url: string | null | undefined; 
   const [error, setError] = useState(false);
   if (!url || error) {
     const gradients = [
-      "from-purple-900 via-violet-800 to-indigo-900",
+      "from-blue-900 via-blue-800 to-indigo-900",
       "from-rose-900 via-orange-800 to-amber-900",
       "from-emerald-900 via-teal-800 to-cyan-900",
-      "from-blue-900 via-indigo-800 to-purple-900",
+      "from-blue-900 via-indigo-800 to-blue-900",
       "from-pink-900 via-rose-800 to-red-900",
     ];
     const idx = name.charCodeAt(0) % gradients.length;
@@ -67,21 +67,21 @@ function BarListingCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(rank * 0.03, 0.3), layout: { type: "spring", bounce: 0.15, duration: 0.5 } }}
       onClick={onSelect}
-      className={`bg-[#16161D] border rounded-xl overflow-hidden hover:border-purple-500/40 transition-all cursor-pointer group ${
-        isTopRanked && velocity > 0 ? "border-amber-500/30 ring-1 ring-amber-500/10" : "border-[#2A2A36]"
+      className={`bg-[#0A1748]/55 backdrop-blur-xl border rounded-xl overflow-hidden hover:border-cyan-400/40 transition-all cursor-pointer group ${
+        isTopRanked && velocity > 0 ? "border-amber-500/30 ring-1 ring-amber-500/10" : "border-[#24408F]"
       }`}
     >
       <div className="flex h-[130px]">
         <div className="w-[140px] sm:w-[170px] shrink-0 relative overflow-hidden">
           <PlacePhoto url={photoUrl} name={venue.name} className="w-full h-full" />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#16161D]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0A1748]/20" />
           {isTopRanked && velocity > 0 && (
             <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 bg-amber-500/90 rounded text-[9px] font-bold text-black">
               <Flame className="w-2.5 h-2.5" /> #1 TRENDING
             </div>
           )}
           {rank > 0 && rank < 3 && velocity > 0 && (
-            <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 bg-purple-500/90 rounded text-[9px] font-bold text-white">
+            <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 bg-cyan-400/90 rounded text-[9px] font-bold text-white">
               TOP PICK
             </div>
           )}
@@ -93,7 +93,7 @@ function BarListingCard({
               <h3 className="font-bold text-sm leading-tight truncate">{venue.name}</h3>
               {openNow !== null && (
                 <span className={`shrink-0 px-1.5 py-0.5 rounded text-[9px] font-semibold ${
-                  openNow ? "bg-emerald-500/20 text-emerald-400" : "bg-[#2A2A36] text-[#8888A0]"
+                  openNow ? "bg-emerald-500/20 text-emerald-400" : "bg-[#24408F] text-[#8FA6E0]"
                 }`}>
                   {openNow ? "OPEN" : "CLOSED"}
                 </span>
@@ -106,17 +106,17 @@ function BarListingCard({
                 <span className="text-xs font-bold text-amber-400">{venue.rating}</span>
               </div>
               {reviewCount > 0 && (
-                <span className="text-[10px] text-[#8888A0]">({reviewCount.toLocaleString()})</span>
+                <span className="text-[10px] text-[#8FA6E0]">({reviewCount.toLocaleString()})</span>
               )}
               {priceLevel !== null && priceLevel > 0 && (
                 <>
-                  <span className="text-[#2A2A36]">·</span>
-                  <span className="text-[10px] text-[#8888A0]">{"$".repeat(priceLevel)}</span>
+                  <span className="text-[#24408F]">·</span>
+                  <span className="text-[10px] text-[#8FA6E0]">{"$".repeat(priceLevel)}</span>
                 </>
               )}
             </div>
 
-            <div className="flex items-center gap-1 mt-1.5 text-[11px] text-[#8888A0]">
+            <div className="flex items-center gap-1 mt-1.5 text-[11px] text-[#8FA6E0]">
               <MapPin className="w-3 h-3 shrink-0" />
               <span className="truncate">{venue.address}</span>
             </div>
@@ -124,11 +124,11 @@ function BarListingCard({
 
           <div className="flex items-center justify-between mt-auto pt-1">
             <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 text-[11px] text-purple-400 font-medium">
+              <span className="flex items-center gap-1 text-[11px] text-cyan-300 font-medium">
                 <Navigation className="w-3 h-3" /> {venue.distance}
               </span>
               {isVenue && velocity > 0 && (
-                <span className="flex items-center gap-0.5 text-[10px] text-[#8888A0]">
+                <span className="flex items-center gap-0.5 text-[10px] text-[#8FA6E0]">
                   <TrendingUp className="w-3 h-3" /> {velocity}
                 </span>
               )}
@@ -207,30 +207,30 @@ function DiscoverFeed({ onSelectVenue, onSelectPlace }: {
   return (
     <div className="space-y-4">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8888A0]" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8FA6E0]" />
         <input
           type="text"
           placeholder="Search bars, pubs, live music..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-11 pr-4 py-3 bg-[#16161D] border border-[#2A2A36] rounded-xl text-sm text-white placeholder-[#8888A0] focus:outline-none focus:border-purple-500/50 transition-colors"
+          className="w-full pl-11 pr-4 py-3 glass-deep rounded-xl text-sm text-white placeholder-[#8FA6E0] focus:outline-none focus:border-cyan-400/50 transition-colors"
         />
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 text-xs text-[#8888A0]">
-          <MapPin className="w-3.5 h-3.5 text-purple-400" />
+        <div className="flex items-center gap-1 text-xs text-[#8FA6E0]">
+          <MapPin className="w-3.5 h-3.5 text-cyan-300" />
           <span>Singapore</span>
-          <span className="text-[#2A2A36]">·</span>
+          <span className="text-[#24408F]">·</span>
           <span className="font-medium text-white">{sorted.length} bars</span>
         </div>
-        <div className="flex items-center gap-1 bg-[#16161D] border border-[#2A2A36] rounded-lg p-0.5">
+        <div className="flex items-center gap-1 glass-deep rounded-lg p-0.5">
           {(["distance", "rating", "reviews"] as const).map((s) => (
             <button
               key={s}
               onClick={() => setSortBy(s)}
               className={`px-2 py-1 rounded text-[10px] font-medium transition-all capitalize ${
-                sortBy === s ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
+                sortBy === s ? "bg-[#0E1F5C] text-white" : "text-[#8FA6E0] hover:text-white/70"
               }`}
             >
               {s}
@@ -242,12 +242,12 @@ function DiscoverFeed({ onSelectVenue, onSelectPlace }: {
       {loading ? (
         <div className="space-y-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-[#16161D] border border-[#2A2A36] rounded-xl h-[130px] flex overflow-hidden animate-pulse">
-              <div className="w-[140px] sm:w-[170px] bg-[#1E1E28]" />
+            <div key={i} className="glass-deep rounded-xl h-[130px] flex overflow-hidden animate-pulse">
+              <div className="w-[140px] sm:w-[170px] bg-[#0E1F5C]" />
               <div className="flex-1 p-3 space-y-3">
-                <div className="h-4 bg-[#1E1E28] rounded w-3/4" />
-                <div className="h-3 bg-[#1E1E28] rounded w-1/2" />
-                <div className="h-3 bg-[#1E1E28] rounded w-2/3" />
+                <div className="h-4 bg-[#0E1F5C] rounded w-3/4" />
+                <div className="h-3 bg-[#0E1F5C] rounded w-1/2" />
+                <div className="h-3 bg-[#0E1F5C] rounded w-2/3" />
               </div>
             </div>
           ))}
@@ -304,15 +304,15 @@ function BarDetailView({
     >
       <button
         onClick={onBack}
-        className="flex items-center gap-1.5 text-sm text-purple-400 hover:text-purple-300 transition-colors"
+        className="flex items-center gap-1.5 text-sm text-cyan-300 hover:text-cyan-200 transition-colors"
       >
         <ChevronLeft className="w-4 h-4" /> All Bars
       </button>
 
-      <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl overflow-hidden">
+      <div className="glass-deep rounded-xl overflow-hidden">
         <div className="relative h-44 sm:h-52">
           <PlacePhoto url={photoUrl} name={name} className="w-full h-full" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#16161D] via-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A1748] via-transparent" />
           <div className="absolute bottom-4 left-4 right-4">
             <h2 className="text-xl font-bold">{name}</h2>
             <div className="flex items-center gap-3 mt-1.5">
@@ -320,10 +320,10 @@ function BarDetailView({
                 <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
                 <span className="text-sm font-bold text-amber-400">{rating}</span>
                 {reviewCount > 0 && (
-                  <span className="text-xs text-[#8888A0]">({reviewCount.toLocaleString()} reviews)</span>
+                  <span className="text-xs text-[#8FA6E0]">({reviewCount.toLocaleString()} reviews)</span>
                 )}
               </div>
-              <span className="flex items-center gap-1 text-xs text-purple-400">
+              <span className="flex items-center gap-1 text-xs text-cyan-300">
                 <Navigation className="w-3 h-3" /> {distance}
               </span>
             </div>
@@ -331,19 +331,19 @@ function BarDetailView({
         </div>
 
         <div className="p-4 space-y-3">
-          <div className="flex items-center gap-2 text-sm text-[#8888A0]">
+          <div className="flex items-center gap-2 text-sm text-[#8FA6E0]">
             <MapPin className="w-4 h-4 shrink-0" />
             <span>{address}</span>
           </div>
           {isEncoreVenue && venue.liveAct && (
-            <div className="flex items-center gap-2 px-3 py-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
-              <Music className="w-4 h-4 text-purple-400 shrink-0" />
-              <span className="text-sm font-medium text-purple-400">{venue.liveAct}</span>
+            <div className="flex items-center gap-2 px-3 py-2 bg-cyan-400/10 rounded-lg border border-cyan-400/20">
+              <Music className="w-4 h-4 text-cyan-300 shrink-0" />
+              <span className="text-sm font-medium text-cyan-300">{venue.liveAct}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-auto" />
             </div>
           )}
           {isEncoreVenue && (
-            <div className="flex items-center gap-2 text-sm text-[#8888A0]">
+            <div className="flex items-center gap-2 text-sm text-[#8FA6E0]">
               <Clock className="w-4 h-4 shrink-0" />
               <span>{venue.openHours}</span>
             </div>
@@ -351,9 +351,9 @@ function BarDetailView({
         </div>
       </div>
 
-      <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl overflow-hidden">
-        <div className="p-3 border-b border-[#2A2A36] flex items-center gap-2">
-          <MapPin className="w-4 h-4 text-purple-400" />
+      <div className="glass-deep rounded-xl overflow-hidden">
+        <div className="p-3 border-b border-[#24408F] flex items-center gap-2">
+          <MapPin className="w-4 h-4 text-cyan-300" />
           <span className="text-sm font-semibold">Location</span>
         </div>
         <div className="h-48">
@@ -368,13 +368,13 @@ function BarDetailView({
 
       {isEncoreVenue && venue && onBook && (
         <>
-          <div className="flex gap-1 bg-[#16161D] rounded-xl p-1">
+          <div className="flex gap-1 glass rounded-xl p-1">
             {(["floor", "menu", "info"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setActiveTab(t)}
                 className={`flex-1 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
-                  activeTab === t ? "bg-[#1E1E28] text-white" : "text-[#8888A0] hover:text-white/70"
+                  activeTab === t ? "bg-[#0E1F5C] text-white" : "text-[#8FA6E0] hover:text-white/70"
                 }`}
               >
                 {t === "floor" ? "Floor Plan" : t}
@@ -384,7 +384,7 @@ function BarDetailView({
 
           {activeTab === "floor" && (
             <div className="space-y-4">
-              <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5">
+              <div className="glass-deep rounded-xl p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold">Select Your Table</h3>
                   <div className="flex items-center gap-3 text-[10px]">
@@ -393,9 +393,9 @@ function BarDetailView({
                     <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-400" />VIP</span>
                   </div>
                 </div>
-                <div className="relative w-full aspect-[16/10] bg-[#1E1E28] rounded-xl border border-[#2A2A36] overflow-hidden">
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 px-8 py-2 bg-gradient-to-r from-purple-500/20 via-purple-500/30 to-purple-500/20 rounded-full border border-purple-500/30">
-                    <span className="text-xs font-semibold text-purple-400 tracking-widest uppercase">Stage</span>
+                <div className="relative w-full aspect-[16/10] bg-[#0E1F5C] rounded-xl border border-[#24408F] overflow-hidden">
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 px-8 py-2 bg-gradient-to-r from-cyan-400/20 via-cyan-400/30 to-cyan-400/20 rounded-full border border-cyan-400/30">
+                    <span className="text-xs font-semibold text-cyan-300 tracking-widest uppercase">Stage</span>
                   </div>
                   {venue.tables.map((table) => {
                     const isSelected = selectedTable?.id === table.id;
@@ -411,7 +411,7 @@ function BarDetailView({
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setSelectedTable(isSelected ? null : table)}
                         className={`absolute w-12 h-12 rounded-lg border-2 flex items-center justify-center text-xs font-bold transition-all ${colorMap[table.status]} ${
-                          isSelected ? "ring-2 ring-purple-400 ring-offset-2 ring-offset-[#1E1E28]" : ""
+                          isSelected ? "ring-2 ring-cyan-300 ring-offset-2 ring-offset-[#0E1F5C]" : ""
                         } ${table.status === "available" ? "cursor-pointer" : "cursor-default"}`}
                         style={{ left: `${table.x}%`, top: `${table.y}%`, transform: "translate(-50%, -50%)" }}
                       >
@@ -428,20 +428,20 @@ function BarDetailView({
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5"
+                    className="glass-deep rounded-xl p-5"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h4 className="font-semibold text-lg">Table {selectedTable.label}</h4>
-                        <p className="text-sm text-[#8888A0]">{selectedTable.seats} seats</p>
+                        <p className="text-sm text-[#8FA6E0]">{selectedTable.seats} seats</p>
                       </div>
-                      <button onClick={() => setSelectedTable(null)} className="text-[#8888A0] hover:text-white">
+                      <button onClick={() => setSelectedTable(null)} className="text-[#8FA6E0] hover:text-white">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <p className="text-xs text-[#8888A0]">Minimum Spend</p>
+                        <p className="text-xs text-[#8FA6E0]">Minimum Spend</p>
                         <p className="text-xl font-bold text-amber-400">${selectedTable.minSpend}</p>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -457,7 +457,7 @@ function BarDetailView({
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => onBook(selectedTable)}
-                        className="w-full py-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white font-semibold rounded-xl"
+                        className="w-full py-3 bg-gradient-to-r from-cyan-600 to-cyan-400 text-white font-semibold rounded-xl"
                       >
                         Book Table {selectedTable.label}
                       </motion.button>
@@ -473,7 +473,7 @@ function BarDetailView({
           )}
 
           {activeTab === "menu" && (
-            <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5 space-y-4">
+            <div className="glass-deep rounded-xl p-5 space-y-4">
               <h3 className="font-semibold">Digital Menu</h3>
               {[
                 { cat: "Signature Cocktails", items: [{ n: "Velvet Sour", p: "$22" }, { n: "Neon Fizz", p: "$20" }, { n: "Encore Old Fashioned", p: "$24" }] },
@@ -481,9 +481,9 @@ function BarDetailView({
                 { cat: "Bites", items: [{ n: "Truffle Fries", p: "$16" }, { n: "Wings Platter", p: "$22" }, { n: "Wagyu Sliders", p: "$28" }] },
               ].map((section) => (
                 <div key={section.cat}>
-                  <h4 className="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2">{section.cat}</h4>
+                  <h4 className="text-xs font-semibold text-cyan-300 uppercase tracking-wider mb-2">{section.cat}</h4>
                   {section.items.map((item) => (
-                    <div key={item.n} className="flex items-center justify-between py-2 border-b border-[#2A2A36]/50 last:border-0">
+                    <div key={item.n} className="flex items-center justify-between py-2 border-b border-[#24408F]/50 last:border-0">
                       <span className="text-sm">{item.n}</span>
                       <span className="text-sm font-medium text-amber-400">{item.p}</span>
                     </div>
@@ -494,9 +494,9 @@ function BarDetailView({
           )}
 
           {activeTab === "info" && (
-            <div className="bg-[#16161D] border border-[#2A2A36] rounded-xl p-5 space-y-3">
+            <div className="glass-deep rounded-xl p-5 space-y-3">
               <h3 className="font-semibold">About {venue.name}</h3>
-              <p className="text-sm text-[#8888A0] leading-relaxed">
+              <p className="text-sm text-[#8FA6E0] leading-relaxed">
                 A premium live music venue in the heart of Singapore featuring nightly performances,
                 craft cocktails, and an intimate atmosphere perfect for music lovers.
               </p>
@@ -507,8 +507,8 @@ function BarDetailView({
                   { label: "Capacity", value: `${venue.tables.reduce((s, t) => s + t.seats, 0)} seats` },
                   { label: "WiFi", value: "Free" },
                 ].map((info) => (
-                  <div key={info.label} className="bg-[#1E1E28] rounded-lg p-3">
-                    <p className="text-[10px] text-[#8888A0] uppercase tracking-wider">{info.label}</p>
+                  <div key={info.label} className="bg-[#0E1F5C] rounded-lg p-3">
+                    <p className="text-[10px] text-[#8FA6E0] uppercase tracking-wider">{info.label}</p>
                     <p className="text-sm font-medium mt-0.5">{info.value}</p>
                   </div>
                 ))}
@@ -519,16 +519,16 @@ function BarDetailView({
       )}
 
       {!isEncoreVenue && (
-        <div className="bg-[#16161D] border border-purple-500/20 rounded-xl p-5 text-center space-y-3">
-          <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto">
-            <Music className="w-6 h-6 text-purple-400" />
+        <div className="bg-[#0A1748] border border-cyan-400/20 rounded-xl p-5 text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-cyan-400/20 flex items-center justify-center mx-auto">
+            <Music className="w-6 h-6 text-cyan-300" />
           </div>
           <h3 className="font-semibold">Coming Soon on ENCORE</h3>
-          <p className="text-sm text-[#8888A0] leading-relaxed">
+          <p className="text-sm text-[#8FA6E0] leading-relaxed">
             This venue hasn&apos;t joined the ENCORE network yet. Table booking, live band schedules,
             and song requests will be available once they&apos;re onboarded.
           </p>
-          <button className="px-5 py-2.5 bg-purple-500/20 text-purple-400 rounded-xl text-sm font-medium hover:bg-purple-500/30 transition-colors">
+          <button className="px-5 py-2.5 bg-cyan-400/20 text-cyan-300 rounded-xl text-sm font-medium hover:bg-cyan-400/30 transition-colors">
             Notify Me When Available
           </button>
         </div>
@@ -565,7 +565,7 @@ function BookingCheckout({
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-[#16161D] border border-[#2A2A36] rounded-2xl p-6 w-full max-w-md"
+        className="glass-deep rounded-2xl p-6 w-full max-w-md"
       >
         {confirmed ? (
           <div className="text-center py-8 space-y-4">
@@ -573,8 +573,8 @@ function BookingCheckout({
               <CheckCircle2 className="w-16 h-16 mx-auto text-emerald-400" />
             </motion.div>
             <h3 className="text-xl font-bold">Booking Confirmed!</h3>
-            <p className="text-sm text-[#8888A0]">Table {table.label} at {venue.name} is reserved for you.</p>
-            <button onClick={onClose} className="mt-4 px-6 py-2 bg-[#1E1E28] border border-[#2A2A36] rounded-xl text-sm hover:bg-[#2A2A36] transition-colors">
+            <p className="text-sm text-[#8FA6E0]">Table {table.label} at {venue.name} is reserved for you.</p>
+            <button onClick={onClose} className="mt-4 px-6 py-2 bg-[#0E1F5C] border border-[#24408F] rounded-xl text-sm hover:bg-[#24408F] transition-colors">
               Done
             </button>
           </div>
@@ -582,27 +582,27 @@ function BookingCheckout({
           <>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold">Confirm Booking</h3>
-              <button onClick={onClose} className="text-[#8888A0] hover:text-white"><X className="w-5 h-5" /></button>
+              <button onClick={onClose} className="text-[#8FA6E0] hover:text-white"><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-4">
-              <div className="bg-[#1E1E28] rounded-xl p-4 space-y-2">
-                <div className="flex justify-between text-sm"><span className="text-[#8888A0]">Venue</span><span className="font-medium">{venue.name}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-[#8888A0]">Table</span><span className="font-medium">{table.label} ({table.seats} seats)</span></div>
-                <div className="flex justify-between text-sm"><span className="text-[#8888A0]">Date</span><span className="font-medium">Tonight</span></div>
-                <div className="border-t border-[#2A2A36] my-2" />
-                <div className="flex justify-between text-sm"><span className="text-[#8888A0]">Min. Spend</span><span className="font-bold text-amber-400">${table.minSpend}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-[#8888A0]">Booking Fee</span><span className="font-medium">$10.00</span></div>
+              <div className="bg-[#0E1F5C] rounded-xl p-4 space-y-2">
+                <div className="flex justify-between text-sm"><span className="text-[#8FA6E0]">Venue</span><span className="font-medium">{venue.name}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#8FA6E0]">Table</span><span className="font-medium">{table.label} ({table.seats} seats)</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#8FA6E0]">Date</span><span className="font-medium">Tonight</span></div>
+                <div className="border-t border-[#24408F] my-2" />
+                <div className="flex justify-between text-sm"><span className="text-[#8FA6E0]">Min. Spend</span><span className="font-bold text-amber-400">${table.minSpend}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#8FA6E0]">Booking Fee</span><span className="font-medium">$10.00</span></div>
               </div>
-              <div className="bg-[#1E1E28] rounded-xl p-4 flex items-center gap-3">
-                <CreditCard className="w-5 h-5 text-purple-400" />
-                <div><p className="text-sm font-medium">Apple Pay</p><p className="text-xs text-[#8888A0]">•••• 4242</p></div>
+              <div className="bg-[#0E1F5C] rounded-xl p-4 flex items-center gap-3">
+                <CreditCard className="w-5 h-5 text-cyan-300" />
+                <div><p className="text-sm font-medium">Apple Pay</p><p className="text-xs text-[#8FA6E0]">•••• 4242</p></div>
               </div>
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleConfirm}
                 disabled={loading}
-                className="w-full py-3.5 bg-gradient-to-r from-purple-600 to-purple-500 text-white font-semibold rounded-xl disabled:opacity-60 flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-gradient-to-r from-cyan-600 to-cyan-400 text-white font-semibold rounded-xl disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

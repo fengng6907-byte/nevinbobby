@@ -107,8 +107,8 @@ export interface Booking {
 }
 
 interface EncoreContextType {
-  activeView: "patron" | "venue" | "artist" | "tipjar";
-  setActiveView: (v: "patron" | "venue" | "artist" | "tipjar") => void;
+  activeView: "city" | "patron" | "venue" | "artist" | "tipjar";
+  setActiveView: (v: "city" | "patron" | "venue" | "artist" | "tipjar") => void;
   venues: Venue[];
   artists: Artist[];
   gigs: Gig[];
@@ -207,7 +207,7 @@ const initialSongRequests: SongRequest[] = [
 ];
 
 export function EncoreProvider({ children }: { children: ReactNode }) {
-  const [activeView, setActiveView] = useState<"patron" | "venue" | "artist" | "tipjar">("patron");
+  const [activeView, setActiveView] = useState<"city" | "patron" | "venue" | "artist" | "tipjar">("city");
   const [venues, setVenues] = useState<Venue[]>(initialVenues);
   const [artists] = useState<Artist[]>(initialArtists);
   const [gigs, setGigs] = useState<Gig[]>(initialGigs);
