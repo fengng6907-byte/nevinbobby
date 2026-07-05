@@ -7,6 +7,7 @@ import {
   Star, Music, MapPin, Clock, DollarSign, Trophy,
   Crown, Medal, Flame, TrendingUp, Mic2, Volume2
 } from "lucide-react";
+import SoundWave from "./SoundWave";
 
 interface RankedBand {
   id: string;
@@ -205,6 +206,7 @@ function LiveBandRankings() {
             <div className="text-[10px] text-[#8FA6E0]">Total Tips</div>
           </div>
         </div>
+        <SoundWave height={52} className="mt-2 -mb-1" />
       </div>
 
       <div className="space-y-3">

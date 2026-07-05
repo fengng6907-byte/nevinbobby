@@ -13,6 +13,7 @@ import {
   Mic2, Search, Heart, Calendar, MapPin, Star, Trophy,
   ChevronRight, Radio, Users, Wifi, Sparkles,
 } from "lucide-react";
+import SoundWave from "./SoundWave";
 
 type ViewKey = "patron" | "artist" | "tipjar";
 
@@ -321,25 +322,33 @@ export default function CityLanding() {
 
   return (
     <div className="max-w-7xl mx-auto" onMouseMove={onMouseMove}>
-      {/* ------ hero heading ------ */}
+      {/* ------ hero heading over interactive sound wave ------ */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
         className="text-center pt-6 pb-2 relative z-20"
       >
-        <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-5 text-[11px] tracking-[0.2em] uppercase text-[#8FA6E0]">
-          <Sparkles className="w-3 h-3 text-[#6CF9FF]" />
-          Living Digital City
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        {/* the wave sits behind the wordmark and reacts to mouse / touch */}
+        <div className="relative max-w-2xl mx-auto">
+          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2">
+            <SoundWave height={170} />
+          </div>
+          <div className="relative pointer-events-none py-6">
+            <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-5 text-[11px] tracking-[0.2em] uppercase text-[#8FA6E0]">
+              <Sparkles className="w-3 h-3 text-[#6CF9FF]" />
+              Living Digital City
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <h1
+              className="text-5xl sm:text-7xl font-bold tracking-[0.18em] text-glow bg-clip-text text-transparent bg-gradient-to-b from-white via-[#BFEFFF] to-[#00D8FF]"
+              style={{ fontFamily: "var(--font-grotesk)" }}
+            >
+              ENCORE
+            </h1>
+          </div>
         </div>
-        <h1
-          className="text-5xl sm:text-7xl font-bold tracking-[0.18em] text-glow bg-clip-text text-transparent bg-gradient-to-b from-white via-[#BFEFFF] to-[#00D8FF]"
-          style={{ fontFamily: "var(--font-grotesk)" }}
-        >
-          ENCORE
-        </h1>
-        <p className="text-sm text-[#8FA6E0] mt-3 max-w-md mx-auto">
+        <p className="text-sm text-[#8FA6E0] mt-1 max-w-md mx-auto">
           The entire live music scene inside one interactive digital world.
           Tap a landmark to enter its district.
         </p>

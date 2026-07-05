@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Music, Send, DollarSign, CheckCircle2, MapPin, ChevronDown, Star, Search
 } from "lucide-react";
+import SoundWave from "./SoundWave";
 
 interface BarOption {
   id: string;
@@ -84,6 +85,7 @@ export default function TipJarView() {
             <p className="text-xs text-[#8FA6E0]">Send a request to the band on stage</p>
           </div>
         </div>
+        <SoundWave height={48} className="mt-2 -mb-1" />
       </div>
 
       <div className="glass-deep rounded-xl p-5 space-y-4">

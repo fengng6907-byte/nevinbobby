@@ -28,6 +28,8 @@ Amber = tips/gold, Emerald = money/open, Rose = booked. Unchanged semantics.
 - Ambient: `encore-ambient` grid drift, orbs, rising particles (in `layout.tsx`)
 - City: `hud-float*`, `beacon-pulse`, `wifi-wave`, `window-blink`,
   `building-scan`, `eq-bar` keyframes
+- `SoundWave.tsx`: canvas waveform — idle layered sines; mouse/touch proximity
+  amplifies bars with gaussian falloff (hero, Live Bands + Tip Jar headers)
 - Page transitions + micro-interactions via Framer Motion
 - All ambient/decorative animation disabled under `prefers-reduced-motion`
 
