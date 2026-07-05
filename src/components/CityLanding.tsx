@@ -58,8 +58,28 @@ function MiniVisualizer({ magenta = false }: { magenta?: boolean }) {
   );
 }
 
+/* flowing neon hairline that traces along a panel edge */
+function FlowLine({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 200 14"
+      className={`hud-flowline w-[85%] h-3 -bottom-1.5 ${flip ? "right-2 scale-x-[-1]" : "left-2"}`}
+      preserveAspectRatio="none"
+      aria-hidden
+    >
+      <path
+        d="M 0 7 Q 20 1 40 7 T 80 7 Q 95 12 110 6 T 150 8 Q 175 2 200 7"
+        fill="none"
+        stroke="#00F0FF"
+        strokeWidth="1"
+        strokeOpacity="0.65"
+      />
+    </svg>
+  );
+}
+
 function HudPanel({
-  title, icon: Icon, onOpen, children, className = "", floatClass = "hud-float", visualizer = false,
+  title, icon: Icon, onOpen, children, className = "", floatClass = "hud-float", visualizer = false, shape = "a", flip = false,
 }: {
   title: string;
   icon: typeof Radio;
@@ -68,11 +88,13 @@ function HudPanel({
   className?: string;
   floatClass?: string;
   visualizer?: boolean;
+  shape?: "a" | "b" | "c";
+  flip?: boolean;
 }) {
   return (
     <motion.div
       whileHover={{ scale: 1.02, y: -3 }}
-      className={`hud-glass rounded-3xl p-4 text-left w-full transition-shadow duration-500 ease-elastic ${floatClass} ${className} ${onOpen ? "cursor-pointer" : ""}`}
+      className={`hud-organic hud-organic-${shape} p-5 text-left w-full transition-shadow duration-500 ease-elastic ${floatClass} ${className} ${onOpen ? "cursor-pointer" : ""}`}
       onClick={onOpen}
       role={onOpen ? "button" : undefined}
       tabIndex={onOpen ? 0 : undefined}
@@ -83,13 +105,41 @@ function HudPanel({
           <div className="w-7 h-7 rounded-lg bg-[#00F0FF]/15 flex items-center justify-center">
             <Icon className="w-3.5 h-3.5 text-[#00F0FF]" />
           </div>
-          <span className="text-xs font-semibold tracking-wide">{title}</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.28em] chromatic">{title}</span>
           {visualizer && <MiniVisualizer />}
         </div>
         {onOpen && <ChevronRight className="w-3.5 h-3.5 text-[#8FA6E0]" />}
       </div>
       {children}
+      <FlowLine flip={flip} />
     </motion.div>
+  );
+}
+
+/* scattered digital debris: coordinates, frequency ticks, crosshairs */
+function MicroArtifacts({ city }: { city: "kl" | "sg" }) {
+  const coords = city === "kl" ? "3.1579°N · 101.7123°E" : "1.2834°N · 103.8607°E";
+  return (
+    <div className="absolute inset-0 pointer-events-none" aria-hidden>
+      <span className="hud-artifact top-[6%] left-[3%] artifact-flicker">{coords}</span>
+      <span className="hud-artifact top-[4%] right-[5%]">SYNC 44.1kHz</span>
+      <span className="hud-artifact top-[38%] left-[1%] rotate-90 origin-left">CH-02 // GAIN +3dB</span>
+      <span className="hud-artifact bottom-[12%] right-[2%] artifact-flicker">GRID.SECTOR 7F</span>
+      <span className="hud-artifact bottom-[30%] left-[6%] text-[#FF007F]/40">▲ PEAK -3.2dB</span>
+      <span className="hud-artifact top-[18%] right-[16%] text-[10px]">+</span>
+      <span className="hud-artifact bottom-[42%] right-[8%] text-[10px]">+</span>
+      <span className="hud-artifact top-[52%] left-[14%] text-[10px] text-[#FF007F]/35">+</span>
+      <div className="freq-ticks absolute bottom-[6%] left-[4%]">
+        {[3, 6, 4, 8, 5, 7, 3, 6, 8, 4, 5, 7].map((h, i) => (
+          <span key={i} style={{ height: h }} />
+        ))}
+      </div>
+      <div className="freq-ticks absolute top-[8%] right-[22%]">
+        {[5, 3, 7, 4, 8, 3, 6].map((h, i) => (
+          <span key={i} style={{ height: h }} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -99,7 +149,7 @@ function LiveGigsWidget({ onOpen }: { onOpen: () => void }) {
   const { gigs } = useEncore();
   const list = [...gigs].slice(0, 3);
   return (
-    <HudPanel title="Live Gigs" icon={Radio} onOpen={onOpen} floatClass="hud-float" visualizer>
+    <HudPanel title="Live Gigs" icon={Radio} onOpen={onOpen} floatClass="hud-float" visualizer shape="a">
       <div className="space-y-2">
         {list.map((g) => {
           const live = g.status === "confirmed";
@@ -130,7 +180,7 @@ function LiveGigsWidget({ onOpen }: { onOpen: () => void }) {
 function VenueSearchWidget({ onOpen }: { onOpen: () => void }) {
   const { venues } = useEncore();
   return (
-    <HudPanel title="Venue Search" icon={MapPin} onOpen={onOpen} floatClass="hud-float-slow">
+    <HudPanel title="Venue Search" icon={MapPin} onOpen={onOpen} floatClass="hud-float-slow" shape="b" flip>
       <div className="space-y-2">
         {venues.slice(0, 2).map((v) => (
           <div key={v.id} className="flex items-center gap-2.5 rounded-xl bg-[#020410]/50 border border-[#1A365D]/70 px-2.5 py-2">
@@ -151,7 +201,7 @@ function BandPerformanceWidget({ onOpen }: { onOpen: () => void }) {
   const { artists } = useEncore();
   const top = [...artists].sort((a, b) => b.rating - a.rating).slice(0, 3);
   return (
-    <HudPanel title="Band Performance" icon={Users} onOpen={onOpen} floatClass="" visualizer>
+    <HudPanel title="Band Performance" icon={Users} onOpen={onOpen} floatClass="" visualizer shape="c">
       <div className="flex gap-2">
         {top.map((a) => (
           <div key={a.id} className="flex-1 rounded-xl bg-[#020410]/50 border border-[#1A365D]/70 p-2 text-center min-w-0">
@@ -173,7 +223,7 @@ function TipJarWidget({ onOpen }: { onOpen: () => void }) {
   const { songRequests } = useEncore();
   const total = songRequests.reduce((s, r) => s + r.tipAmount, 0);
   return (
-    <HudPanel title="Tip Jar Tonight" icon={Trophy} onOpen={onOpen} floatClass="">
+    <HudPanel title="Tip Jar Tonight" icon={Trophy} onOpen={onOpen} floatClass="" shape="b" flip>
       <div className="flex items-end justify-between">
         <div>
           <p className="text-2xl font-bold font-mono text-[#00F0FF] text-glow">${total}</p>
@@ -230,7 +280,7 @@ export default function CityLanding() {
               <span className="w-1.5 h-1.5 rounded-full bg-[#FF007F] animate-pulse" />
             </div>
             <h1
-              className="text-5xl sm:text-7xl font-bold tracking-[0.18em] text-glow bg-clip-text text-transparent bg-gradient-to-b from-white via-[#BFEFFF] to-[#00F0FF]"
+              className="text-5xl sm:text-7xl font-bold tracking-widest chromatic-strong text-[#DFF9FF]"
               style={{ fontFamily: "var(--font-grotesk)" }}
             >
               ENCORE
@@ -277,6 +327,7 @@ export default function CityLanding() {
           {/* terrain */}
           <div className="relative">
             <WaveTerrain city={cityView} height={460} pins={VENUE_PINS} />
+            <MicroArtifacts city={cityView} />
 
             {/* landmark module chips */}
             {landmarks.map((lm, i) => (

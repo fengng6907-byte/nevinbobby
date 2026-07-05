@@ -205,13 +205,20 @@ export default function WaveTerrain({ city, className = "", height = 440, pins =
       const scaleAt = (d: number) => 1 - d * 0.82; // horizontal shrink toward horizon
       const rowY = (d: number) => horizon + (height - horizon - 8) * (1 - d) ** 1.7;
 
+      // landmark hub drifts slightly between the KL and SG skylines
+      const hubX = -0.03 + cityMix * 0.08;
+
       const waveAt = (wx: number, d: number) => {
         // layered "audio frequency" ripple, stronger up close
         const base =
           Math.sin(wx * 7 + time * 2.1 + d * 9) * 0.45 +
           Math.sin(wx * 15 - time * 3.2 + d * 4) * 0.3 +
           Math.sin(d * 16 + time * 1.4) * 0.25;
-        return base * (1 - d) * 26;
+        // massive frequency peaks rising toward the landmark hub
+        const hubShape =
+          Math.exp(-((wx - hubX) ** 2) / 0.07) * Math.exp(-((d - 0.62) ** 2) / 0.09);
+        const hubPulse = 0.55 + 0.45 * Math.sin(time * 2.3 + wx * 11);
+        return base * (1 - d) * 26 + hubShape * hubPulse * 64;
       };
 
       // pointer lift: gaussian in screen space
@@ -231,31 +238,55 @@ export default function WaveTerrain({ city, className = "", height = 440, pins =
         y -= disp;
         const l = lift(x, y);
         y -= l;
-        const energy = Math.min(1, Math.abs(disp) / 22 + l / 30); // 0..1 crest intensity
-        return [x, y, energy];
+        // normalized elevation: 0 = deepest valley, 1 = tallest peak
+        const elev = Math.min(1, Math.max(0, (disp + l + 20) / 92));
+        return [x, y, elev];
+      };
+
+      // 16-bit elevation ramp: deep indigo valleys -> electric blue ->
+      // cyan -> ultra-vibrant magenta peaks
+      const RAMP: [number, [number, number, number]][] = [
+        [0.0, [40, 14, 122]],   // deep indigo
+        [0.45, [0, 114, 255]],  // electric blue
+        [0.7, [0, 240, 255]],   // neon cyan
+        [1.0, [255, 0, 127]],   // electric magenta
+      ];
+      const rampColor = (e: number): [number, number, number] => {
+        for (let i = 1; i < RAMP.length; i++) {
+          if (e <= RAMP[i][0]) {
+            const [t0, c0] = RAMP[i - 1];
+            const [t1, c1] = RAMP[i];
+            const f = (e - t0) / (t1 - t0);
+            return [
+              Math.round(c0[0] + (c1[0] - c0[0]) * f),
+              Math.round(c0[1] + (c1[1] - c0[1]) * f),
+              Math.round(c0[2] + (c1[2] - c0[2]) * f),
+            ];
+          }
+        }
+        return RAMP[RAMP.length - 1][1];
       };
 
       ctx.lineWidth = 1;
 
-      // horizontal rows (audio frequency lines)
+      // horizontal rows (audio frequency lines), gradient injected per segment
       for (let row = 0; row < NZ; row++) {
         const d = row / (NZ - 1);
         for (let col = 0; col < NX - 1; col++) {
           const [x1, y1, e1] = pt(col, row);
           const [x2, y2, e2] = pt(col + 1, row);
-          const e = Math.max(e1, e2);
-          const depthAlpha = 0.10 + (1 - d) * 0.45;
-          // crest: blend cyan -> magenta with energy
-          const r = Math.round(0 + e * 255);
-          const g = Math.round(240 - e * 240);
-          const b = Math.round(255 - e * 128);
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${Math.min(1, depthAlpha + e * 0.5)})`;
+          const e = (e1 + e2) / 2;
+          const [r, g, b] = rampColor(e);
+          const depthAlpha = 0.14 + (1 - d) * 0.42;
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${Math.min(1, depthAlpha + e * 0.55)})`;
+          ctx.lineWidth = 1 + e * 0.8; // peaks read thicker, like loud frequencies
           ctx.beginPath();
           ctx.moveTo(x1, y1);
           ctx.lineTo(x2, y2);
           ctx.stroke();
         }
       }
+      ctx.lineWidth = 1;
 
       // vertical columns
       ctx.strokeStyle = "rgba(0, 114, 255, 0.20)";
@@ -310,16 +341,23 @@ export default function WaveTerrain({ city, className = "", height = 440, pins =
         const x = cx + wx * (W * 0.62) * (0.35 + scaleAt(z));
         const y = rowY(z) - waveAt(wx, z) - lift(cx + wx * W * 0.5, rowY(z));
         const phase = reduceMotion ? 0.4 : ((time * 0.45 + i * 0.37) % 1);
-        const maxR = 30 * (1 - z * 0.5);
-        // two expanding rings
-        for (const p of [phase, (phase + 0.5) % 1]) {
+        const maxR = 34 * (1 - z * 0.5);
+        // multi-layered sonic pings: three rings, alternating color and
+        // opacity to imply distance and volume
+        const rings: [number, string, number][] = [
+          [phase, "255, 0, 127", 0.6],
+          [(phase + 0.33) % 1, "0, 240, 255", 0.35],
+          [(phase + 0.66) % 1, "255, 0, 127", 0.22],
+        ];
+        for (const [p, rgb, peak] of rings) {
           const rr = p * maxR;
-          ctx.strokeStyle = `rgba(255, 0, 127, ${(1 - p) * 0.55})`;
-          ctx.lineWidth = 1.4;
+          ctx.strokeStyle = `rgba(${rgb}, ${(1 - p) * peak})`;
+          ctx.lineWidth = 1.6 - p;
           ctx.beginPath();
           ctx.ellipse(x, y, rr, rr * 0.38, 0, 0, Math.PI * 2);
           ctx.stroke();
         }
+        ctx.lineWidth = 1;
         // core
         ctx.fillStyle = "rgba(0, 240, 255, 0.95)";
         ctx.shadowColor = "rgba(0, 240, 255, 0.9)";

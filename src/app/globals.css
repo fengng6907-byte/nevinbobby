@@ -306,6 +306,91 @@ body {
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
 }
 
+/* ---------- Fluid asymmetry: organic HUD shells (no hard boxes) ---------- */
+@keyframes blob-drift-a {
+  0%, 100% { border-radius: 38px 64% 42px 58% / 56px 44px 62% 38px; }
+  50% { border-radius: 52% 40px 60% 36px / 40px 58% 36px 64%; }
+}
+
+@keyframes blob-drift-b {
+  0%, 100% { border-radius: 60% 36px 54% 44px / 42px 60% 38px 56%; }
+  50% { border-radius: 40px 58% 36px 62% / 58% 40px 62% 42px; }
+}
+
+@keyframes blob-drift-c {
+  0%, 100% { border-radius: 46px 54% 38px 66% / 60% 38px 58% 40px; }
+  50% { border-radius: 58% 42px 64% 38px / 42px 56% 40px 60%; }
+}
+
+.hud-organic {
+  position: relative;
+  background: rgba(10, 20, 50, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.30);
+  box-shadow:
+    0 0 18px rgba(0, 240, 255, 0.12),
+    0 0 2px rgba(0, 240, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 24px 60px rgba(1, 4, 20, 0.6);
+}
+
+.hud-organic-a { animation: blob-drift-a 14s ease-in-out infinite; border-radius: 38px 64% 42px 58% / 56px 44px 62% 38px; }
+.hud-organic-b { animation: blob-drift-b 17s ease-in-out infinite; border-radius: 60% 36px 54% 44px / 42px 60% 38px 56%; }
+.hud-organic-c { animation: blob-drift-c 20s ease-in-out infinite; border-radius: 46px 54% 38px 66% / 60% 38px 58% 40px; }
+
+/* flowing neon hairline that traces one edge of an organic panel */
+.hud-flowline {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));
+}
+
+/* ---------- Artisan typography ---------- */
+.chromatic {
+  text-shadow: -1px 0 rgba(0, 240, 255, 0.75), 1px 0 rgba(255, 0, 127, 0.75);
+}
+
+.chromatic-strong {
+  text-shadow:
+    -2px 0 rgba(0, 240, 255, 0.65),
+    2px 0 rgba(255, 0, 127, 0.65),
+    0 0 28px rgba(0, 240, 255, 0.45);
+}
+
+/* ---------- Micro artifacts (hand-crafted HUD debris) ---------- */
+.hud-artifact {
+  position: absolute;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 8px;
+  letter-spacing: 0.22em;
+  color: rgba(0, 240, 255, 0.4);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+@keyframes artifact-flicker {
+  0%, 88%, 100% { opacity: 1; }
+  92% { opacity: 0.2; }
+  96% { opacity: 0.7; }
+}
+
+.artifact-flicker { animation: artifact-flicker 6s steps(1) infinite; }
+
+.freq-ticks {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 8px;
+}
+
+.freq-ticks span {
+  width: 1px;
+  background: rgba(0, 240, 255, 0.35);
+}
+
 /* Sonar ping (venue radar markers) */
 @keyframes sonar-ping {
   0% { opacity: 0.9; transform: scale(0.15); }
@@ -334,7 +419,11 @@ body {
   .wave-glow,
   .wave-glow-magenta,
   .live-badge,
-  .sonar-ping {
+  .sonar-ping,
+  .hud-organic-a,
+  .hud-organic-b,
+  .hud-organic-c,
+  .artifact-flicker {
     animation: none !important;
   }
 }

@@ -84,18 +84,25 @@ export default function AvatarStudio({ className = "" }: { className?: string })
   };
 
   return (
-    <div className={`hud-glass rounded-3xl p-4 ${className}`}>
-      <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg bg-[#00F0FF]/15 flex items-center justify-center">
-          <UserRound className="w-3.5 h-3.5 text-[#00F0FF]" />
+    <div className={`relative mt-24 ${className}`}>
+      {/* mesh sphere breaks out of the panel as a floating spatial element */}
+      <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-48 z-10 hud-float pointer-events-none">
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(0,240,255,0.18) 0%, rgba(0,240,255,0.04) 55%, transparent 75%)", filter: "blur(6px)" }}
+        />
+        <div style={{ filter: "drop-shadow(0 0 22px rgba(0,240,255,0.4))" }}>
+          <WireframeHead style={style} hair={hair} />
         </div>
-        <span className="text-xs font-semibold tracking-wide">Create Your Character</span>
       </div>
 
-      {/* wireframe mesh preview */}
-      <div className="rounded-2xl bg-[#020410]/60 border border-[#0072FF]/30 p-3 mb-4 hud-float-slow">
-        <WireframeHead style={style} hair={hair} />
-      </div>
+      <div className="hud-organic hud-organic-b p-5 pt-28">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-7 h-7 rounded-lg bg-[#00F0FF]/15 flex items-center justify-center">
+            <UserRound className="w-3.5 h-3.5 text-[#00F0FF]" />
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.28em] chromatic">Create Your Character</span>
+        </div>
 
       {/* instrument chips */}
       <p className="text-[10px] uppercase tracking-[0.18em] text-[#8FA6E0] mb-2">Instrument</p>
@@ -175,7 +182,8 @@ export default function AvatarStudio({ className = "" }: { className?: string })
             <Sparkles className="w-3.5 h-3.5" /> Create
           </motion.button>
         )}
-      </AnimatePresence>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
