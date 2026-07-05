@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-bg-primary: #030B29;
+  --color-bg-primary: #020410;
   --color-bg-card: #0A1748;
   --color-bg-elevated: #13246B;
   --color-border-subtle: #28437F;
@@ -21,7 +21,7 @@
 }
 
 body {
-  background: #030B29;
+  background: #020410;
   color: #EAF2FF;
   font-family: var(--font-grotesk), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
@@ -37,7 +37,7 @@ body {
     radial-gradient(ellipse 80% 55% at 50% -10%, rgba(0, 216, 255, 0.14), transparent 60%),
     radial-gradient(ellipse 60% 45% at 85% 110%, rgba(90, 104, 255, 0.16), transparent 60%),
     radial-gradient(ellipse 55% 40% at 10% 95%, rgba(0, 118, 255, 0.12), transparent 65%),
-    linear-gradient(180deg, #04102F 0%, #030B29 45%, #071B5B 130%);
+    linear-gradient(180deg, #02060F 0%, #020410 45%, #061A4E 130%);
 }
 
 .encore-ambient::before {
@@ -185,6 +185,140 @@ body {
   animation: eq-bounce 0.9s ease-in-out infinite;
 }
 
+/* ---------- Cyberpunk HUD layer (Project ENCORE directive) ---------- */
+:root {
+  --neon-cyan: #00F0FF;
+  --neon-magenta: #FF007F;
+  --electric-blue: #1A365D;
+  --electric-blue-bright: #0072FF;
+  --ease-elastic: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* HUD glassmorphism: 12px blur, translucent navy, glowing neon edge */
+.hud-glass {
+  background: rgba(10, 20, 50, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 240, 255, 0.28);
+  box-shadow:
+    0 0 18px rgba(0, 240, 255, 0.12),
+    0 0 2px rgba(0, 240, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 24px 60px rgba(1, 4, 20, 0.6);
+}
+
+.hud-glass-magenta {
+  background: rgba(30, 8, 35, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 0, 127, 0.35);
+  box-shadow:
+    0 0 18px rgba(255, 0, 127, 0.14),
+    0 0 2px rgba(255, 0, 127, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* Undulating outer glow for active UI elements */
+@keyframes waveGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 6px rgba(0, 240, 255, 0.45),
+      0 0 16px rgba(0, 240, 255, 0.25),
+      0 0 32px rgba(0, 240, 255, 0.10);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(0, 240, 255, 0.7),
+      0 0 28px rgba(0, 240, 255, 0.4),
+      0 0 52px rgba(0, 240, 255, 0.18);
+  }
+}
+
+.wave-glow { animation: waveGlow 2.6s ease-in-out infinite; }
+
+@keyframes waveGlowMagenta {
+  0%, 100% {
+    box-shadow:
+      0 0 6px rgba(255, 0, 127, 0.5),
+      0 0 16px rgba(255, 0, 127, 0.28),
+      0 0 32px rgba(255, 0, 127, 0.12);
+  }
+  50% {
+    box-shadow:
+      0 0 12px rgba(255, 0, 127, 0.75),
+      0 0 30px rgba(255, 0, 127, 0.45),
+      0 0 56px rgba(255, 0, 127, 0.2);
+  }
+}
+
+.wave-glow-magenta { animation: waveGlowMagenta 1.8s ease-in-out infinite; }
+
+/* Elastic easing for hovers / transitions */
+.ease-elastic { transition-timing-function: var(--ease-elastic); }
+
+/* LIVE NOW badge */
+@keyframes live-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.live-badge {
+  color: #FF9FCB;
+  background: rgba(255, 0, 127, 0.16);
+  border: 1px solid rgba(255, 0, 127, 0.45);
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.8);
+  animation: live-blink 1.4s ease-in-out infinite;
+}
+
+/* Cyberpunk range sliders (Avatar Engine) */
+.cyber-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--electric-blue-bright));
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.35);
+  outline: none;
+  cursor: pointer;
+}
+
+.cyber-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #020410;
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+  transition: transform 0.3s var(--ease-elastic);
+}
+
+.cyber-range::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+.cyber-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: #020410;
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+}
+
+/* Sonar ping (venue radar markers) */
+@keyframes sonar-ping {
+  0% { opacity: 0.9; transform: scale(0.15); }
+  70% { opacity: 0.25; }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+.sonar-ping {
+  animation: sonar-ping 2.8s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .encore-ambient::before,
   .encore-orb,
@@ -196,7 +330,11 @@ body {
   .wifi-wave,
   .window-blink,
   .building-scan,
-  .eq-bar {
+  .eq-bar,
+  .wave-glow,
+  .wave-glow-magenta,
+  .live-badge,
+  .sonar-ping {
     animation: none !important;
   }
 }

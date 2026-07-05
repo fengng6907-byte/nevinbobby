@@ -16,7 +16,7 @@ export default function Navigation() {
 
   return (
     <nav className="sticky top-3 z-50 px-3">
-      <div className="max-w-3xl mx-auto glass rounded-2xl flex items-center justify-between h-14 px-3">
+      <div className="max-w-3xl mx-auto hud-glass rounded-2xl flex items-center justify-between h-14 px-3">
         <button
           onClick={() => setActiveView("city")}
           className="flex items-center gap-2 pl-1"
@@ -42,12 +42,12 @@ export default function Navigation() {
                 {active && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 rounded-lg bg-[#00D8FF]/12 border border-[#00D8FF]/35 glow-cyan"
+                    className="absolute inset-0 rounded-lg bg-[#00F0FF]/12 border border-[#00F0FF]/40 wave-glow"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                   />
                 )}
                 <span className="relative flex items-center gap-2">
-                  <tab.icon className={`w-4 h-4 ${active ? "text-[#6CF9FF]" : ""}`} />
+                  <tab.icon className={`w-4 h-4 ${active ? "text-[#00F0FF]" : ""}`} />
                   <span className="hidden sm:inline">{tab.label}</span>
                 </span>
               </button>

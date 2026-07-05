@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${grotesk.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#030B29]">
+      <body className="min-h-full flex flex-col bg-[#020410]">
         <div className="encore-ambient" aria-hidden>
           <div className="encore-orb w-[42vw] h-[42vw] bg-[#00D8FF]/40 -top-[12vw] left-[8vw]" />
           <div className="encore-orb w-[36vw] h-[36vw] bg-[#5A68FF]/40 bottom-[-10vw] right-[-6vw]" style={{ animationDelay: "-6s" }} />

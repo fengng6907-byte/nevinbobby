@@ -80,7 +80,7 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
           fullscreenControl: false,
           mapTypeControl: false,
           streetViewControl: false,
-          backgroundColor: "#030B29",
+          backgroundColor: "#020410",
         }}
       >
         {isSingleMode && singlePin && (
