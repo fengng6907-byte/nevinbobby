@@ -135,7 +135,10 @@ const SG_LANDMARKS: Polyline[] = [
 export default function WaveTerrain({ city, className = "", height = 440, pins = [] }: WaveTerrainProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const cityRef = useRef<CityKey>(city);
-  cityRef.current = city;
+
+  useEffect(() => {
+    cityRef.current = city;
+  }, [city]);
 
   useEffect(() => {
     const canvas = canvasRef.current;

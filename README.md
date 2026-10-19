@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ENCORE — live music discovery
 
-## Getting Started
+ENCORE is a mobile-first discovery marketplace for live music across Malaysia and Singapore. The current experience uses the **After Dark** design system: near-black foundations, editorial typography, warm venue photography and soft violet interaction accents.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`. The customer journey begins on the real homepage at `/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Product routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` — discovery-led customer homepage
+- `/discover` — filterable performances, venues and artists with list/map controls
+- `/venues`, `/venues/[slug]` — venue directory and profiles
+- `/artists`, `/artists/[slug]` — artist directory and profiles
+- `/gigs/[slug]` — performance details
+- `/artist/register`, `/venue/register` — onboarding previews
+- `/artist/dashboard`, `/venue/dashboard` — role-specific sample workspaces
+- `/for-business` — venue-owner proposition
+- `/account`, `/saved` — honest empty states until auth and persistence are connected
+- `/legacy` — preserved original implementation
 
-## Learn More
+## Data and integrations
 
-To learn more about Next.js, take a look at the following resources:
+The repository has no database or authentication provider. Listings in `src/data/demo.ts` are fictional sample data and are visibly labelled. Dashboard analytics deliberately show unavailable states rather than fabricated numbers. Form workflows use local React state and do not submit external messages or payments.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copy `.env.example` to `.env.local` only if you need the legacy Google Places integration:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `GOOGLE_MAPS_SERVER_API_KEY` — server route handlers
+- `NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY` — browser map, restricted by HTTP referrer
+- `NEXT_PUBLIC_SITE_URL` — canonical site origin
 
-## Deploy on Vercel
+## Verification
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment safety
+
+The Vercel project is connected to the repository default branch. Feature branches should be reviewed through preview deployments before merge. Do not connect production customer data or enable payments until authentication, authorization, persistence and audit logging exist.

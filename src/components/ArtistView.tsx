@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useEncore } from "@/context/EncoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Star, Music, MapPin, Clock, DollarSign, Trophy,
+  Star, MapPin, Clock, Trophy,
   Crown, Medal, Flame, TrendingUp, Mic2, Volume2
 } from "lucide-react";
 import SoundWave from "./SoundWave";

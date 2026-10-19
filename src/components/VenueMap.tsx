@@ -3,9 +3,8 @@
 import { useState, useCallback, useRef } from "react";
 import { GoogleMap, useJsApiLoader, MarkerF, InfoWindowF } from "@react-google-maps/api";
 import { Venue, GooglePlaceVenue } from "@/context/EncoreContext";
-import { MapPin, Navigation } from "lucide-react";
 
-const GOOGLE_MAPS_KEY = "AIzaSyCD_6oA5BlqCbWyBldL_7OqJ2t8K8AnHY8";
+const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_BROWSER_KEY;
 
 const darkMapStyle = [
   { elementType: "geometry", stylers: [{ color: "#0A1440" }] },
@@ -32,8 +31,8 @@ interface VenueMapProps {
   singlePin?: { lat: number; lng: number; name: string };
 }
 
-export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin }: VenueMapProps) {
-  const { isLoaded } = useJsApiLoader({ id: "encore-map", googleMapsApiKey: GOOGLE_MAPS_KEY });
+function GoogleVenueMap({ venues, onSelectVenue, singlePin }: VenueMapProps) {
+  const { isLoaded } = useJsApiLoader({ id: "encore-map", googleMapsApiKey: GOOGLE_MAPS_KEY! });
   const [activeMarker, setActiveMarker] = useState<string | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
 
@@ -136,4 +135,11 @@ export default function VenueMap({ venues, googlePlace, onSelectVenue, singlePin
       </GoogleMap>
     </div>
   );
+}
+
+export default function VenueMap(props: VenueMapProps) {
+  if (!GOOGLE_MAPS_KEY) {
+    return <div className="h-48 bg-[#15151D] flex items-center justify-center p-6 text-center text-[#A4A4B5] text-sm">Map preview unavailable. Add a browser-restricted Google Maps key to enable the legacy map.</div>;
+  }
+  return <GoogleVenueMap {...props} />;
 }

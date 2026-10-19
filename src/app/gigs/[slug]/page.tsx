@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { CalendarDays, Clock3, MapPin } from "lucide-react";
+import EnquiryCard from "@/components/EnquiryCard";
+import { DemoPill, SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { getGig, getGigDetails, gigs } from "@/data/demo";
+type Props={params:Promise<{slug:string}>};
+export function generateStaticParams(){return gigs.map(({slug})=>({slug}))}
+export async function generateMetadata({params}:Props):Promise<Metadata>{const gig=getGig((await params).slug);if(!gig)return{title:"Performance not found"};const d=getGigDetails(gig);return{title:`${d.artist.name} at ${d.venue.name}`,description:`Demo performance listing in ${d.venue.city}.`,robots:{index:false,follow:true}}}
+export default async function GigPage({params}:Props){const gig=getGig((await params).slug);if(!gig)notFound();const d=getGigDetails(gig);return <><SiteHeader/><main><section className="detail-hero"><Image src={d.venue.image} alt="Fictional performance demonstration artwork" fill priority sizes="100vw" className="cover-image"/><div className="hero-overlay"/><div className="container detail-hero-copy"><DemoPill>Scheduled · Demo data</DemoPill><h1>{d.artist.name}<br/><em style={{color:"var(--accent-hover)"}}>at {d.venue.name}</em></h1><p><CalendarDays size={17}/>{gig.day}, {gig.date} · <Clock3 size={17}/>{gig.time}–{gig.endTime}</p></div></section><div className="container detail-grid"><div><section className="detail-section"><p className="eyebrow">Performance details</p><h2>{d.artist.genre.join(" meets ")}</h2><p>{d.artist.bio}</p><div className="amenity-grid"><span><MapPin size={14} style={{display:"inline"}}/> {d.venue.district}, {d.venue.city}</span><span>{gig.cover}</span><span>{gig.language}</span><span>Status: {gig.status}</span></div></section><section className="detail-section"><p className="eyebrow">Explore both sides</p><h2>One gig. Two profiles.</h2><p>ENCORE treats each performance as one shared record connecting a venue and an artist—avoiding duplicate listings and keeping schedule updates consistent.</p><div className="result-actions"><Link href={`/artists/${d.artist.slug}`}>View artist profile</Link><Link href={`/venues/${d.venue.slug}`}>View venue profile</Link></div></section></div><EnquiryCard/></div></main><SiteFooter/></>}
