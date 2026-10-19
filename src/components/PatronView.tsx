@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useEncore, Venue, Table, GooglePlaceVenue } from "@/context/EncoreContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -9,8 +9,6 @@ import {
   Navigation, ImageIcon
 } from "lucide-react";
 import VenueMap from "./VenueMap";
-
-const GOOGLE_MAPS_KEY = "AIzaSyCD_6oA5BlqCbWyBldL_7OqJ2t8K8AnHY8";
 
 function PlacePhoto({ url, name, className }: { url: string | null | undefined; name: string; className?: string }) {
   const [error, setError] = useState(false);
@@ -33,6 +31,7 @@ function PlacePhoto({ url, name, className }: { url: string | null | undefined; 
     );
   }
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={url}
       alt={name}
@@ -158,7 +157,6 @@ function DiscoverFeed({ onSelectVenue, onSelectPlace }: {
   const [sortBy, setSortBy] = useState<"distance" | "rating" | "reviews">("distance");
 
   useEffect(() => {
-    setLoading(true);
     fetch("/api/places")
       .then((r) => r.json())
       .then((data) => {
@@ -619,7 +617,7 @@ function BookingCheckout({
 }
 
 export default function PatronView() {
-  const { venues, bookTable } = useEncore();
+  const { bookTable } = useEncore();
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<GooglePlaceVenue | null>(null);
   const [bookingTable, setBookingTable] = useState<{ venue: Venue; table: Table } | null>(null);

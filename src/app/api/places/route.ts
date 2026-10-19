@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { sgBars } from "@/data/sgBars";
 
-const API_KEY = "AIzaSyCD_6oA5BlqCbWyBldL_7OqJ2t8K8AnHY8";
 const CENTER = { lat: 1.3000, lng: 103.8400 };
 
 interface PlaceResult {
@@ -28,11 +27,15 @@ function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number) {
 }
 
 export async function GET() {
+  const apiKey = process.env.GOOGLE_MAPS_SERVER_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ venues: sgBars, count: sgBars.length, source: "fallback" });
+  }
   try {
     const queries = [
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${CENTER.lat},${CENTER.lng}&radius=5000&type=bar&keyword=live+band&key=${API_KEY}`,
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${CENTER.lat},${CENTER.lng}&radius=5000&type=bar&keyword=live+music&key=${API_KEY}`,
-      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=live+band+bar+Singapore&key=${API_KEY}`,
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${CENTER.lat},${CENTER.lng}&radius=5000&type=bar&keyword=live+band&key=${apiKey}`,
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${CENTER.lat},${CENTER.lng}&radius=5000&type=bar&keyword=live+music&key=${apiKey}`,
+      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=live+band+bar+Singapore&key=${apiKey}`,
     ];
 
     const responses = await Promise.all(
@@ -67,9 +70,7 @@ export async function GET() {
             userRatingsTotal: p.user_ratings_total || 0,
             distance: dist < 1 ? `${Math.round(dist * 1000)} m` : `${dist.toFixed(1)} km`,
             distanceValue: dist,
-            photoUrl: photoRef
-              ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photoRef}&key=${API_KEY}`
-              : null,
+            photoUrl: photoRef ? `/api/place-photo?ref=${encodeURIComponent(photoRef)}` : null,
             openNow: p.opening_hours?.open_now ?? null,
             priceLevel: p.price_level ?? null,
           };
